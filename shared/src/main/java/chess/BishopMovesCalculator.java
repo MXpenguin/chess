@@ -11,10 +11,10 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         int currentCol = position.getColumn();
 
         for (int i = 1; i <= 8; ++i) {
-            if (currentRow + i <= 8 && currentCol + i <= 8) {
-                ChessPosition endPosition = new ChessPosition(currentRow+i, currentCol+i);
-                moves.add(new ChessMove(position, endPosition, null));
-            }
+//            if (currentRow + i <= 8 && currentCol + i <= 8) {
+//                ChessPosition endPosition = new ChessPosition(currentRow+i, currentCol+i);
+//                moves.add(new ChessMove(position, endPosition, null));
+//            }
             if (currentRow - i >= 1 && currentCol - i >= 1) {
                 ChessPosition endPosition = new ChessPosition(currentRow-i, currentCol-i);
                 moves.add(new ChessMove(position, endPosition, null));
@@ -27,6 +27,30 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
                 ChessPosition endPosition = new ChessPosition(currentRow-i, currentCol+i);
                 moves.add(new ChessMove(position, endPosition, null));
             }
+        }
+
+        // upper diagonal moves
+        for (int i = 1; i < 8; ++i) {
+            int endRow = currentRow + i;
+            int endCol = currentCol + i;
+
+            // Check if out of bounds
+            if (endRow > 8 || endCol > 8) {
+                break;
+            }
+
+            ChessPosition endPosition = new ChessPosition(endRow, endCol);
+
+            // Check if end square blocked
+            ChessPiece endPositionPiece = board.getPiece(endPosition);
+            if (endPositionPiece != null) {
+                if (endPositionPiece.getTeamColor() != board.getPiece(position).getTeamColor()) {
+                    moves.add(new ChessMove(position, endPosition, null));
+                }
+                break;
+            }
+
+            moves.add(new ChessMove(position, endPosition, null));
         }
 
         return moves;
