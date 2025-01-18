@@ -3,17 +3,29 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class KingMovesCalculator implements PieceMovesCalculator {
+public class KnightMovesCalculator implements PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
 
         int currentRow = position.getRow();
         int currentCol = position.getColumn();
 
-        for (int i = -1; i <= 1; ++i) {
-            for (int j = -1; j <= 1; ++j) {
+        int[] jumpOne = {-1,1};
+        int[] jumpTwo = {-2,2};
+
+        for (int i : jumpOne) {
+            for (int j : jumpTwo) {
                 ChessPosition endPosition = new ChessPosition(currentRow + i, currentCol + j);
-                if (isValidPosition(endPosition) && !isBlockedByFriend(board, position, endPosition)) {
+                if (!isBlocked(board, position, endPosition)) {
+                    moves.add(new ChessMove(position, endPosition, null));
+                }
+            }
+        }
+
+        for (int i : jumpTwo) {
+            for (int j : jumpOne) {
+                ChessPosition endPosition = new ChessPosition(currentRow + i, currentCol + j);
+                if (!isBlocked(board, position, endPosition)) {
                     moves.add(new ChessMove(position, endPosition, null));
                 }
             }
@@ -22,13 +34,14 @@ public class KingMovesCalculator implements PieceMovesCalculator {
         return moves;
     };
 
-    boolean isValidPosition(ChessPosition pos) {
+    private boolean isValidPosition(ChessPosition pos) {
         int row = pos.getRow();
         int col = pos.getColumn();
         return 1 <= row && row <= 8 && 1 <= col && col <= 8;
     };
 
-    boolean isBlockedByFriend(ChessBoard board, ChessPosition currentPos, ChessPosition endPos) {
+    private boolean isBlocked(ChessBoard board, ChessPosition currentPos, ChessPosition endPos) {
+        if (!isValidPosition(endPos)) return true;
         if (board.getPiece(endPos) == null) {
             return false;
         }
