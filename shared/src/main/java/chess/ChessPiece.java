@@ -67,7 +67,10 @@ public class ChessPiece {
                 KnightMovesCalculator knightMovesCalc = new KnightMovesCalculator();
                 yield knightMovesCalc.pieceMoves(board, myPosition);
             }
-//            case ROOK -> {}
+            case ROOK -> {
+                RookMovesCalculator rookMovesCalc = new RookMovesCalculator();
+                yield rookMovesCalc.pieceMoves(board, myPosition);
+            }
 //            case PAWN -> {}
             default -> throw new RuntimeException("No type");
         };

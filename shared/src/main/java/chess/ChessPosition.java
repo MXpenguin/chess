@@ -34,6 +34,13 @@ public class ChessPosition {
         return col;
     }
 
+    /**
+     * @return true if position is on board, else false
+     */
+    public boolean isValid() {
+        return 1 <= row && row <= 8 && 1 <= col && col <= 8;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
