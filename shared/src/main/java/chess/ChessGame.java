@@ -10,18 +10,21 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    private TeamColor team;
+    private TeamColor currentTeam;
     private ChessBoard board;
 
     public ChessGame() {
+        board = new ChessBoard();
+        board.resetBoard();
 
+        currentTeam = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return team;
+        return currentTeam;
     }
 
     /**
@@ -30,7 +33,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        this.team = team;
+        this.currentTeam = team;
     }
 
     /**
@@ -60,9 +63,12 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (validMoves(move.getStartPosition()).contains(move)) {
-            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
-            board.addPiece(move.getStartPosition(), null);
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        if (validMoves(startPos).contains(move)
+                && board.getPiece(startPos).getTeamColor() == currentTeam) {
+            board.addPiece(endPos, board.getPiece(startPos));
+            board.addPiece(startPos, null);
         } else {
             throw new InvalidMoveException("Move is not valid");
         }
