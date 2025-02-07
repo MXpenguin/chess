@@ -173,20 +173,6 @@ public class ChessGame {
             }
         }
 
-//        for (int i = 1; i <= 8; ++i) {
-//            for (int j = 1; j <= 8; ++j) {
-//                ChessPosition startPos = new ChessPosition(i,j);
-//
-//                ChessPiece piece = board.getPiece(startPos);
-//                if (piece != null) {
-//                    if (piece.getTeamColor() == teamColor) continue;
-//                    Collection<ChessMove> moves = piece.pieceMoves(board, startPos);
-//                    for (ChessMove move : moves) {
-//                        if (kingPos.equals(move.getEndPosition())) return true;
-//                    }
-//                }
-//            }
-//        }
         return false;
     }
 
