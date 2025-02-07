@@ -63,16 +63,23 @@ public class ChessGame {
         for (ChessMove move : possibleMoves) {
             ChessPosition endPosition = move.getEndPosition();
 
-            ChessBoard tempBoard = new ChessBoard(board);
+            //ChessBoard tempBoard = new ChessBoard(board);
 
-            board.addPiece(endPosition, piece);
+            if (move.getPromotionPiece() != null) {
+                board.addPiece(endPosition, new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+            } else {
+                board.addPiece(endPosition, piece);
+            }
             board.addPiece(startPosition, null);
 
             if (!isInCheck(piece.getTeamColor())) {
                 validMoves.add(move);
             }
 
-            board = tempBoard;
+            board.addPiece(endPosition, null);
+            board.addPiece(startPosition, piece);
+
+            //board = tempBoard;
         }
 
         return validMoves;
