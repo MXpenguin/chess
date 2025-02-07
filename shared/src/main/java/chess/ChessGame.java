@@ -64,12 +64,15 @@ public class ChessGame {
             ChessPosition endPosition = move.getEndPosition();
 
             ChessBoard tempBoard = new ChessBoard(board);
-            tempBoard.addPiece(endPosition, piece);
-            tempBoard.addPiece(startPosition, null);
+
+            board.addPiece(endPosition, piece);
+            board.addPiece(startPosition, null);
 
             if (!isInCheck(piece.getTeamColor())) {
                 validMoves.add(move);
             }
+
+            board = tempBoard;
         }
 
         return validMoves;
@@ -116,7 +119,7 @@ public class ChessGame {
                 }
             }
         }
-        throw new RuntimeException(teamColor + " king is not on board");
+        return null;
     }
 
     private Collection<ChessPosition> getFriendPositions(TeamColor teamColor) {
@@ -141,6 +144,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPos = getKingPosition(teamColor);
+        if (kingPos == null) return false;
 
         for (int i = 1; i <= 8; ++i) {
             for (int j = 1; j <= 8; ++j) {
@@ -148,6 +152,7 @@ public class ChessGame {
 
                 ChessPiece piece = board.getPiece(startPos);
                 if (piece != null) {
+                    if (piece.getTeamColor() == teamColor) continue;
                     Collection<ChessMove> moves = piece.pieceMoves(board, startPos);
                     for (ChessMove move : moves) {
                         if (kingPos.equals(move.getEndPosition())) return true;
