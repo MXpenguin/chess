@@ -109,7 +109,7 @@ public class ChessGame {
         for (int i = 1; i <= 8; ++i) {
             for (int j = 1; j <= 8; ++j) {
                 ChessPosition pos = new ChessPosition(i,j);
-                if (board.getPiece(pos) == king) {
+                if (king.equals(board.getPiece(pos))) {
                     return pos;
                 }
             }
@@ -127,8 +127,19 @@ public class ChessGame {
         ChessPosition kingPos = getKingPosition(teamColor);
 
         for (int i = 1; i <= 8; ++i) {
+            for (int j = 1; j <= 8; ++j) {
+                ChessPosition startPos = new ChessPosition(i,j);
 
+                ChessPiece piece = board.getPiece(startPos);
+                if (piece != null) {
+                    Collection<ChessMove> moves = piece.pieceMoves(board, startPos);
+                    for (ChessMove move : moves) {
+                        if (kingPos.equals(move.getEndPosition())) return true;
+                    }
+                }
+            }
         }
+        return false;
     }
 
     /**
