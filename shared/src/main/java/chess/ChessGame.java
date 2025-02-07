@@ -53,9 +53,9 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (board.getPiece(startPosition) == null) return null;
-
         ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) return null;
+
         Collection<ChessMove> possibleMoves
                 = piece.pieceMoves(board, startPosition);
 
@@ -178,8 +178,13 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (!isInCheck(teamColor)) return false;
+        Collection<ChessPosition> positions = getFriendPositions(teamColor);
 
-        return isInStalemate(teamColor);
+        for (ChessPosition pos : positions) {
+            if (!validMoves(pos).isEmpty()) return false;
+        }
+
+        return true;
     }
 
     /**
@@ -190,6 +195,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        if (isInCheck(teamColor)) return false;
         Collection<ChessPosition> positions = getFriendPositions(teamColor);
 
         for (ChessPosition pos : positions) {
