@@ -3,5 +3,5 @@ package model;
 /**
  * Contains authentication data
  */
-public record AuthData() {
+public record AuthData(String authToken, String username) {
 }
