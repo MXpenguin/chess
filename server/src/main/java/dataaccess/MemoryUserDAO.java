@@ -32,6 +32,6 @@ public class MemoryUserDAO implements UserDAO {
                 return userData;
             }
         }
-        throw new DataAccessException("username not found");
+        return null;
     }
 }

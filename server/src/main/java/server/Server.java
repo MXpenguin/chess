@@ -43,31 +43,56 @@ public class Server {
 
     private void createRoutes() {
         Spark.delete("/db", this::clear);
-//        Spark.post("/session", this::login);
+        Spark.post("/session", this::login);
         Spark.post("/user", this::register);
     }
 
     private Object clear(Request req, Response res) {
         try {
             userService.clear();
+            return "";
         } catch(DataAccessException e) {
-
+            res.status(500);
+            return "";
         }
     }
-
-//    private Object login(Request req, Response res) {
-//        LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
-//        LoginResult result = userService.login(request);
-//        return new Gson().toJson(result);
-//    }
 
     private Object register(Request req, Response res) {
         RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
         try {
             RegisterResult result = userService.register(request);
+            if (result.getMessage() != null) {
+                String message = result.getMessage();
+                switch(message) {
+                    case "Error: already taken" -> res.status(403);
+                    case "Error: bad request" -> res.status(400);
+                    default -> res.status(500);
+                }
+            }
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
-            return "{}";
+            return "";
         }
+    }
+
+    private Object login(Request req, Response res) {
+        LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
+        try {
+            LoginResult result = userService.login(request);
+            if (result.getMessage() != null) {
+                String message = result.getMessage();
+                switch(message) {
+                    case "Error: unauthorized" -> res.status(401);
+                    default -> res.status(500);
+                }
+            }
+            return new Gson().toJson(result);
+        } catch(DataAccessException e) {
+            return "";
+        }
+    }
+
+    private Object logout(Request req, Response res) {
+
     }
 }

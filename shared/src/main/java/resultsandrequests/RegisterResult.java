@@ -18,6 +18,10 @@ public class RegisterResult {
         authToken = null;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     @Override
     public String toString() {
         return "username: " + username + "\n" + "authtoken: " + authToken + "\n" + "message: " + message;
