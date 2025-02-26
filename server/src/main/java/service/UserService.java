@@ -65,7 +65,9 @@ public class UserService {
             return new LogoutResult("Error: unauthorized");
         }
 
-        authDataAccess.
+        authDataAccess.deleteAuth(authToken);
+
+        return new LogoutResult();
     }
 
     private String generateAuthToken(String username) throws DataAccessException {

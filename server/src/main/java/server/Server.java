@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
-import resultsandrequests.LoginRequest;
-import resultsandrequests.LoginResult;
-import resultsandrequests.RegisterRequest;
-import resultsandrequests.RegisterResult;
+import resultsandrequests.*;
 import service.UserService;
 import spark.*;
 
@@ -43,8 +40,9 @@ public class Server {
 
     private void createRoutes() {
         Spark.delete("/db", this::clear);
-        Spark.post("/session", this::login);
         Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
     }
 
     private Object clear(Request req, Response res) {
@@ -93,6 +91,19 @@ public class Server {
     }
 
     private Object logout(Request req, Response res) {
-
+        LogoutRequest request = new LogoutRequest(req.headers("authorization"));
+        try {
+            LogoutResult result = userService.logout(request);
+            if (result.getMessage() != null) {
+                String message = result.getMessage();
+                switch(message) {
+                    case "Error: unauthorized" -> res.status(401);
+                    default -> res.status(500);
+                }
+            }
+            return new Gson().toJson(result);
+        } catch(DataAccessException e) {
+            return "";
+        }
     }
 }

@@ -10,4 +10,8 @@ public class LogoutResult {
     public LogoutResult(String message) {
         this.message = message;
     }
+
+    public String getMessage() {
+        return message;
+    }
 }
