@@ -1,10 +1,12 @@
 package resultsandrequests;
 
 public class JoinGameRequest {
+    private final String playerColor;
     private final int gameID;
     private String authToken;
 
-    public JoinGameRequest(int gameID) {
+    public JoinGameRequest(String playerColor, int gameID) {
+        this.playerColor = playerColor;
         this.gameID = gameID;
     }
 
@@ -12,11 +14,15 @@ public class JoinGameRequest {
         this.authToken = authToken;
     }
 
-    public int getGameID() {
-        return gameID;
-    }
-
     public String getAuthToken() {
         return authToken;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public int getGameID() {
+        return gameID;
     }
 }
