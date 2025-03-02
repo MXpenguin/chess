@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -88,19 +89,56 @@ public class GameServiceTests {
 
         String authToken1 = registerResult1.getAuthToken();
 
-        CreateGameRequest createGameRequest = new CreateGameRequest("game1");
-        createGameRequest.setAuthToken(authToken1);
+        CreateGameRequest createGameRequest1 = new CreateGameRequest("game 1");
+        createGameRequest1.setAuthToken(authToken1);
+
+        CreateGameRequest createGameRequest2 = new CreateGameRequest("game 2");
+        createGameRequest2.setAuthToken(authToken1);
 
         Assertions.assertEquals(0, gameService.listGames(new ListGamesRequest(authToken1)).getGames().size(),
                 "List of games does not have 0 element");
 
-        CreateGameResult createGameResult = gameService.createGame(createGameRequest);
+        CreateGameResult createGameResult1 = gameService.createGame(createGameRequest1);
+        CreateGameResult createGameResult2 = gameService.createGame(createGameRequest2);
 
-        Assertions.assertNotNull(createGameResult.getGameID(),
-                "Response has no game id");
-        Assertions.assertNull(createGameResult.getMessage(),
-                "Response has error message");
-        Assertions.assertEquals(1, gameService.listGames(new ListGamesRequest(authToken1)).getGames().size(),
-                "List of games does not have 1 element");
+        ListGamesResult listGamesResult = gameService.listGames(new ListGamesRequest(authToken1));
+
+        Assertions.assertNotNull(listGamesResult.getGames(),
+                "List of games is null");
+        Assertions.assertEquals(2, listGamesResult.getGames().size(),
+                "List of games does not have 2 elements");
+        for (GameData game : listGamesResult.getGames()) {
+            Assertions.assertTrue(game.gameName().startsWith("game "),
+                    "Games in list don't have correct name");
+            Assertions.assertTrue(game.gameID()>=0,
+                    "Games in list don't have game positive id");
+        }
+    }
+
+    @Test
+    @DisplayName("Incorrect list games")
+    public void failListGames() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+
+        String authToken1 = registerResult1.getAuthToken();
+
+        CreateGameRequest createGameRequest1 = new CreateGameRequest("game 1");
+        createGameRequest1.setAuthToken(authToken1);
+
+        CreateGameRequest createGameRequest2 = new CreateGameRequest("game 2");
+        createGameRequest2.setAuthToken(authToken1);
+
+        Assertions.assertEquals(0, gameService.listGames(new ListGamesRequest(authToken1)).getGames().size(),
+                "List of games does not have 0 element");
+
+        CreateGameResult createGameResult1 = gameService.createGame(createGameRequest1);
+        CreateGameResult createGameResult2 = gameService.createGame(createGameRequest2);
+
+        ListGamesResult listGamesResult = gameService.listGames(new ListGamesRequest("bad authtoken"));
+
+        Assertions.assertNotNull(listGamesResult.getMessage(),
+                "Response has no error message");
+        Assertions.assertEquals("Error: unauthorized", listGamesResult.getMessage(),
+                "Response has incorrect error message");
     }
 }
