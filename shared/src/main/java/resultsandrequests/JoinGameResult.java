@@ -10,4 +10,8 @@ public class JoinGameResult {
     public JoinGameResult(String message) {
         this.message = message;
     }
+
+    public String getMessage() {
+        return message;
+    }
 }

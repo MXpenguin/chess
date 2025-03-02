@@ -21,6 +21,11 @@ public class GameService {
         this.gameDataAccess = gameDataAccess;
     }
 
+    public void clear() throws DataAccessException {
+        authDataAccess.clear();
+        gameDataAccess.clear();
+    }
+
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
         String authToken = createGameRequest.getAuthToken();
 
@@ -89,7 +94,7 @@ public class GameService {
 
     private int generateGameID(String gameName) throws DataAccessException {
         int gameID = Math.abs(UUID.randomUUID().toString().hashCode());
-        GameData gameData = new GameData(gameID, "", "", gameName, new ChessGame());
+        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
         gameDataAccess.createGame(gameData);
         return gameID;
     }

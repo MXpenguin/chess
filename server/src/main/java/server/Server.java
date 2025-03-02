@@ -53,6 +53,7 @@ public class Server {
     private Object clear(Request req, Response res) {
         try {
             userService.clear();
+            gameService.clear();
             return "";
         } catch(DataAccessException e) {
             res.status(500);
@@ -160,7 +161,9 @@ public class Server {
             if (result.getMessage() != null) {
                 String message = result.getMessage();
                 switch(message) {
+                    case "Error: bad request" -> res.status(400);
                     case "Error: unauthorized" -> res.status(401);
+                    case "Error: already taken" -> res.status(403);
                     default -> res.status(500);
                 }
             }
