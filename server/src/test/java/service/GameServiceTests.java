@@ -141,4 +141,37 @@ public class GameServiceTests {
         Assertions.assertEquals("Error: unauthorized", listGamesResult.getMessage(),
                 "Response has incorrect error message");
     }
+
+    @Test
+    @DisplayName("Join game")
+    public void successJoinGame() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
+
+        String authToken1 = registerResult1.getAuthToken();
+        String authToken2 = registerResult2.getAuthToken();
+
+        CreateGameRequest createGameRequest1 = new CreateGameRequest("game 1");
+        createGameRequest1.setAuthToken(authToken1);
+
+        CreateGameRequest createGameRequest2 = new CreateGameRequest("game 2");
+        createGameRequest2.setAuthToken(authToken1);
+
+        CreateGameResult createGameResult1 = gameService.createGame(createGameRequest1);
+        CreateGameResult createGameResult2 = gameService.createGame(createGameRequest2);
+
+        int gameID1 = createGameResult1.getGameID();
+        int gameID2 = createGameResult2.getGameID();
+
+        JoinGameRequest joinGameRequest1 = new JoinGameRequest("WHITE", gameID1);
+        joinGameRequest1.setAuthToken(authToken1);
+
+        JoinGameRequest joinGameRequest2 = new JoinGameRequest("BLACK", gameID1);
+        joinGameRequest2.setAuthToken(authToken2);
+
+        JoinGameResult joinGameResult1 = gameService.joinGame(joinGameRequest1);
+        JoinGameResult joinGameResult2 = gameService.joinGame(joinGameRequest2);
+
+        //TODO
+    }
 }
