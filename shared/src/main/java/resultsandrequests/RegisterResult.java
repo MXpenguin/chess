@@ -22,6 +22,14 @@ public class RegisterResult {
         return message;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
     @Override
     public String toString() {
         return "username: " + username + "\n" + "authtoken: " + authToken + "\n" + "message: " + message;
