@@ -3,10 +3,7 @@ package service;
 import dataaccess.*;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
-import resultsandrequests.LogoutRequest;
-import resultsandrequests.LogoutResult;
-import resultsandrequests.RegisterRequest;
-import resultsandrequests.RegisterResult;
+import resultsandrequests.*;
 import spark.utils.Assert;
 
 public class UserServiceTests {
@@ -107,10 +104,45 @@ public class UserServiceTests {
     @Test
     @DisplayName("Login user")
     public void successLogin() throws DataAccessException {
-        userService.register(new RegisterRequest(username1, password1, email1));
-        userService.register(new RegisterRequest(username2, password2, email2));
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
 
+        String authToken1 = registerResult1.getAuthToken();
+        String authToken2 = registerResult2.getAuthToken();
 
+        LogoutResult logoutResult1 = userService.logout(new LogoutRequest(authToken1));
+        LogoutResult logoutResult2 = userService.logout(new LogoutRequest(authToken2));
+
+        LoginResult loginResult1 = userService.login(new LoginRequest(username1, password1));
+
+        Assertions.assertEquals(username1, loginResult1.getUsername(),
+                "Login response does not have username");
+        Assertions.assertNotNull(loginResult1.getAuthToken(),
+                "Login response has no authToken string");
+        Assertions.assertNull(loginResult1.getMessage(),
+                "Login response has error message");
+    }
+
+    @Test
+    @DisplayName("Incorrect login")
+    public void failLogin() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
+
+        String authToken1 = registerResult1.getAuthToken();
+
+        LogoutResult logoutResult1 = userService.logout(new LogoutRequest(authToken1));
+
+        LoginResult loginResult1 = userService.login(new LoginRequest(username1, password2));
+
+        Assertions.assertNull(loginResult1.getUsername(),
+                "Login with incorrect password has username");
+        Assertions.assertNull(loginResult1.getAuthToken(),
+                "Login with incorrect password has authToken string");
+        Assertions.assertNotNull(loginResult1.getMessage(),
+                "Login with incorrect password has no error message");
+        Assertions.assertEquals("Error: unauthorized", loginResult1.getMessage(),
+                "Login with incorrect password has incorrect error message");
     }
 
     @Test

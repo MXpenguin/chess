@@ -20,4 +20,12 @@ public class LoginResult {
     public String getMessage() {
         return message;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
 }
