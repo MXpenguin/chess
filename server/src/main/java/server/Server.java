@@ -47,6 +47,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
     }
 
     private Object clear(Request req, Response res) {
@@ -137,6 +138,25 @@ public class Server {
         ListGamesRequest request = new ListGamesRequest(req.headers("authorization"));
         try {
             ListGamesResult result = gameService.listGames(request);
+            if (result.getMessage() != null) {
+                String message = result.getMessage();
+                switch(message) {
+                    case "Error: unauthorized" -> res.status(401);
+                    default -> res.status(500);
+                }
+            }
+            return new Gson().toJson(result);
+        } catch(DataAccessException e) {
+            res.status(500);
+            return "";
+        }
+    }
+
+    private Object joinGame(Request req, Response res) {
+        JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
+        request.setAuthToken(req.headers("authorization"));
+        try {
+            JoinGameResult result = gameService.joinGame(request);
             if (result.getMessage() != null) {
                 String message = result.getMessage();
                 switch(message) {

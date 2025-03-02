@@ -43,7 +43,7 @@ public class GameService {
     }
 
     private int generateGameID(String gameName) throws DataAccessException {
-        int gameID = UUID.randomUUID().toString().hashCode();
+        int gameID = Math.abs(UUID.randomUUID().toString().hashCode());
         GameData gameData = new GameData(gameID, "", "", gameName, new ChessGame());
         gameDataAccess.createGame(gameData);
         return gameID;
