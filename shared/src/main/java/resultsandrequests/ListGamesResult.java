@@ -21,4 +21,8 @@ public class ListGamesResult {
     public String getMessage() {
         return message;
     }
+
+    public Collection<GameData> getGames() {
+        return games;
+    }
 }

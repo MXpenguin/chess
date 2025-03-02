@@ -17,4 +17,8 @@ public class CreateGameResult {
     public String getMessage() {
         return message;
     }
+
+    public Integer getGameID() {
+        return gameID;
+    }
 }

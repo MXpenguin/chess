@@ -10,7 +10,9 @@ public class UserServiceTests {
 
     private UserDAO userDAO;
     private AuthDAO authDAO;
+    //private GameDAO gameDAO;
     private UserService userService;
+    private GameService gameService;
     private String username1;
     private String username2;
     private String password1;
@@ -22,7 +24,9 @@ public class UserServiceTests {
     public void setUp() {
         userDAO = new MemoryUserDAO();
         authDAO = new MemoryAuthDAO();
+        //gameDAO = new MemoryGameDAO();
         userService = new UserService(userDAO, authDAO);
+        //gameService = new GameService(authDAO, gameDAO);
         username1 = "Alice";
         username2 = "Bob";
         password1 = "supersecretpassword";
