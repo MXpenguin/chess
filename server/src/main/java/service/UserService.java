@@ -29,6 +29,7 @@ public class UserService {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
+
         if (username == null || password == null || email == null) {
             return new RegisterResult("Error: bad request");
         }

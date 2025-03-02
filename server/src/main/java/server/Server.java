@@ -1,10 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import resultsandrequests.*;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -13,9 +12,12 @@ import javax.xml.crypto.Data;
 public class Server {
 
     private final UserService userService;
+    private final GameService gameService;
 
     public Server() {
-        this.userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
+        AuthDAO authDAO = new MemoryAuthDAO();
+        this.userService = new UserService(new MemoryUserDAO(), authDAO);
+        this.gameService = new GameService(authDAO, new MemoryGameDAO());
     }
 
     public int run(int desiredPort) {
@@ -43,6 +45,8 @@ public class Server {
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
     }
 
     private Object clear(Request req, Response res) {
@@ -69,6 +73,7 @@ public class Server {
             }
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
+            res.status(500);
             return "";
         }
     }
@@ -86,6 +91,7 @@ public class Server {
             }
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
+            res.status(500);
             return "";
         }
     }
@@ -103,6 +109,44 @@ public class Server {
             }
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
+            res.status(500);
+            return "";
+        }
+    }
+
+    private Object createGame(Request req, Response res) {
+        CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
+        request.setAuthToken(req.headers("authorization"));
+        try {
+            CreateGameResult result = gameService.createGame(request);
+            if (result.getMessage() != null) {
+                String message = result.getMessage();
+                switch(message) {
+                    case "Error: unauthorized" -> res.status(401);
+                    default -> res.status(500);
+                }
+            }
+            return new Gson().toJson(result);
+        } catch(DataAccessException e) {
+            res.status(500);
+            return "";
+        }
+    }
+
+    private Object listGames(Request req, Response res) {
+        ListGamesRequest request = new ListGamesRequest(req.headers("authorization"));
+        try {
+            ListGamesResult result = gameService.listGames(request);
+            if (result.getMessage() != null) {
+                String message = result.getMessage();
+                switch(message) {
+                    case "Error: unauthorized" -> res.status(401);
+                    default -> res.status(500);
+                }
+            }
+            return new Gson().toJson(result);
+        } catch(DataAccessException e) {
+            res.status(500);
             return "";
         }
     }
