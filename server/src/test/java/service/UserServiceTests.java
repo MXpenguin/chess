@@ -86,6 +86,25 @@ public class UserServiceTests {
     }
 
     @Test
+    @DisplayName("Incorrect logout")
+    public void failLogout() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
+
+        String authToken1 = registerResult1.getAuthToken();
+        String authToken2 = registerResult2.getAuthToken();
+
+        LogoutResult logoutResult1 = userService.logout(new LogoutRequest(""));
+
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
+                "User logged out without authorization");
+        Assertions.assertNotNull(logoutResult1.getMessage(),
+                "Response for unauthorized logout has no error message");
+        Assertions.assertNotNull(authDAO.getAuth(authToken2),
+                "Unintended user logged out");
+    }
+
+    @Test
     @DisplayName("Login user")
     public void successLogin() throws DataAccessException {
         userService.register(new RegisterRequest(username1, password1, email1));
