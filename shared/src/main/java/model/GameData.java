@@ -14,9 +14,6 @@ public final class GameData {
     private final String gameName;
     private final transient ChessGame game;
 
-    /**
-     *
-     */
     public GameData(int gameID, String whiteUsername, String blackUsername,
                     String gameName, ChessGame game) {
         this.gameID = gameID;

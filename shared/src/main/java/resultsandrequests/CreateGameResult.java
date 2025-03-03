@@ -1,5 +1,8 @@
 package resultsandrequests;
 
+/**
+ * Response object with results of create game request
+ */
 public class CreateGameResult {
     private final Integer gameID;
     private final String message;

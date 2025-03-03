@@ -1,5 +1,8 @@
 package resultsandrequests;
 
+/**
+ * Response object with results of register user request
+ */
 public class RegisterResult {
 
     private final String username;

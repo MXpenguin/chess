@@ -5,6 +5,9 @@ import model.GameData;
 
 import java.util.Collection;
 
+/**
+ * Response object with results of list games request
+ */
 public class ListGamesResult {
     private Collection<GameData> games;
     private final String message;

@@ -1,5 +1,8 @@
 package resultsandrequests;
 
+/**
+ * Request object to create game
+ */
 public class CreateGameRequest {
     private final String gameName;
     private String authToken;

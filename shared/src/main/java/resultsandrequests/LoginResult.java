@@ -1,5 +1,8 @@
 package resultsandrequests;
 
+/**
+ * Response object with results of login user request
+ */
 public class LoginResult {
     private final String username;
     private final String authToken;

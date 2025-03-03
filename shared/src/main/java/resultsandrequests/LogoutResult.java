@@ -1,5 +1,8 @@
 package resultsandrequests;
 
+/**
+ * Response object with results of logout user request
+ */
 public class LogoutResult {
     private final String message;
 

@@ -1,5 +1,8 @@
 package resultsandrequests;
 
+/**
+ * Request object to join game
+ */
 public class JoinGameRequest {
     private final String playerColor;
     private final int gameID;
