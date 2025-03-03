@@ -7,6 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import resultsandrequests.*;
+import spark.utils.Assert;
+
+import java.util.Collection;
 
 public class GameServiceTests {
     private UserDAO userDAO;
@@ -161,7 +164,6 @@ public class GameServiceTests {
         CreateGameResult createGameResult2 = gameService.createGame(createGameRequest2);
 
         int gameID1 = createGameResult1.getGameID();
-        int gameID2 = createGameResult2.getGameID();
 
         JoinGameRequest joinGameRequest1 = new JoinGameRequest("WHITE", gameID1);
         joinGameRequest1.setAuthToken(authToken1);
@@ -172,6 +174,99 @@ public class GameServiceTests {
         JoinGameResult joinGameResult1 = gameService.joinGame(joinGameRequest1);
         JoinGameResult joinGameResult2 = gameService.joinGame(joinGameRequest2);
 
-        //TODO
+        Assertions.assertNull(joinGameResult1.getMessage(),
+                "Error message not null");
+        Assertions.assertNull(joinGameResult2.getMessage(),
+                "Error message not null");
+
+        GameData game = getGame(gameID1);
+        Assertions.assertNotNull(game);
+        Assertions.assertEquals("game 1", game.gameName(),
+                "game name does not match");
+        Assertions.assertEquals(username1, game.whiteUsername(),
+                "username1 is not playing as white");
+        Assertions.assertEquals(username2, game.blackUsername(),
+                "username2 is not playing as black");
+    }
+
+    @Test
+    @DisplayName("Incorrect join game")
+    public void failJoinGame() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
+
+        String authToken1 = registerResult1.getAuthToken();
+        String authToken2 = registerResult2.getAuthToken();
+
+        CreateGameRequest createGameRequest1 = new CreateGameRequest("game 1");
+        createGameRequest1.setAuthToken(authToken1);
+
+        CreateGameResult createGameResult1 = gameService.createGame(createGameRequest1);
+
+        int gameID1 = createGameResult1.getGameID();
+
+        JoinGameRequest joinGameRequest1 = new JoinGameRequest("WHITE", gameID1);
+        joinGameRequest1.setAuthToken(authToken1);
+
+        JoinGameRequest joinGameRequest2 = new JoinGameRequest("WHITE", gameID1);
+        joinGameRequest2.setAuthToken(authToken2);
+
+        JoinGameResult joinGameResult1 = gameService.joinGame(joinGameRequest1);
+        JoinGameResult joinGameResult2 = gameService.joinGame(joinGameRequest2);
+
+        Assertions.assertNull(joinGameResult1.getMessage(),
+                "Error message not null");
+        Assertions.assertNotNull(joinGameResult2.getMessage(),
+                "Error message is null");
+        Assertions.assertEquals("Error: already taken", joinGameResult2.getMessage(),
+                "Error message is not correct");
+
+        GameData game = getGame(gameID1);
+        Assertions.assertNotNull(game);
+        Assertions.assertEquals("game 1", game.gameName(),
+                "game name does not match");
+        Assertions.assertEquals(username1, game.whiteUsername(),
+                "username1 is not playing as white");
+        Assertions.assertNull(game.blackUsername(),
+                "black side has player");
+    }
+
+    @Test
+    @DisplayName("Clear")
+    public void testClear() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
+
+        String authToken1 = registerResult1.getAuthToken();
+        String authToken2 = registerResult2.getAuthToken();
+
+        CreateGameRequest createGameRequest1 = new CreateGameRequest("game 1");
+        createGameRequest1.setAuthToken(authToken1);
+
+        CreateGameRequest createGameRequest2 = new CreateGameRequest("game 2");
+        createGameRequest2.setAuthToken(authToken1);
+
+        CreateGameResult createGameResult1 = gameService.createGame(createGameRequest1);
+        CreateGameResult createGameResult2 = gameService.createGame(createGameRequest2);
+
+        Assertions.assertEquals(2,gameDAO.listGames().size());
+        Assertions.assertNotNull(authDAO.getAuth(authToken1));
+
+        gameService.clear();
+
+        Assertions.assertEquals(0,gameDAO.listGames().size(),
+                "Game database not empty");
+        Assertions.assertNull(authDAO.getAuth(authToken1),
+                "Auth database not empty");
+    }
+
+    private GameData getGame(int gameID) throws DataAccessException {
+        Collection<GameData> gameList = gameDAO.listGames();
+        for (GameData game : gameList) {
+            if (game.gameID() == gameID) {
+                return game;
+            }
+        }
+        return null;
     }
 }

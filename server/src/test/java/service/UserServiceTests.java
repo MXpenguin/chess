@@ -10,7 +10,6 @@ public class UserServiceTests {
 
     private UserDAO userDAO;
     private AuthDAO authDAO;
-    //private GameDAO gameDAO;
     private UserService userService;
     private GameService gameService;
     private String username1;
@@ -24,9 +23,7 @@ public class UserServiceTests {
     public void setUp() {
         userDAO = new MemoryUserDAO();
         authDAO = new MemoryAuthDAO();
-        //gameDAO = new MemoryGameDAO();
         userService = new UserService(userDAO, authDAO);
-        //gameService = new GameService(authDAO, gameDAO);
         username1 = "Alice";
         username2 = "Bob";
         password1 = "supersecretpassword";
@@ -150,8 +147,28 @@ public class UserServiceTests {
     }
 
     @Test
-    @DisplayName("Clear data")
-    public void testClear() {
+    @DisplayName("Clear")
+    public void testClear() throws DataAccessException {
+        RegisterResult registerResult1 = userService.register(new RegisterRequest(username1, password1, email1));
+        RegisterResult registerResult2 = userService.register(new RegisterRequest(username2, password2, email2));
 
+        String authToken1 = registerResult1.getAuthToken();
+        String authToken2 = registerResult2.getAuthToken();
+
+        Assertions.assertNotNull(userDAO.getUser(username1));
+        Assertions.assertNotNull(userDAO.getUser(username2));
+        Assertions.assertNotNull(authDAO.getAuth(authToken1));
+        Assertions.assertNotNull(authDAO.getAuth(authToken2));
+
+        userService.clear();
+
+        Assertions.assertNull(userDAO.getUser(username1),
+                "User database not empty");
+        Assertions.assertNull(userDAO.getUser(username2),
+                "User database not empty");
+        Assertions.assertNull(authDAO.getAuth(authToken1),
+                "Auth database not empty");
+        Assertions.assertNull(authDAO.getAuth(authToken2),
+                "Auth database not empty");
     }
 }
