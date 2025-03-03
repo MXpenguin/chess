@@ -17,7 +17,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(myPosition, endPosition, null));
             }
-            if (isEnemy(board, myPosition, endPosition)) break;
+            if (isEnemy(board, myPosition, endPosition)) {
+                break;
+            }
         }
         for (int i = 1; i <= 8; ++i) {
             ChessPosition endPosition = new ChessPosition(myRow - i, myCol + i);
@@ -26,7 +28,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(myPosition, endPosition, null));
             }
-            if (isEnemy(board, myPosition, endPosition)) break;
+            if (isEnemy(board, myPosition, endPosition)) {
+                break;
+            }
         }
         for (int i = 1; i <= 8; ++i) {
             ChessPosition endPosition = new ChessPosition(myRow + i, myCol - i);
@@ -35,7 +39,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(myPosition, endPosition, null));
             }
-            if (isEnemy(board, myPosition, endPosition)) break;
+            if (isEnemy(board, myPosition, endPosition)) {
+                break;
+            }
         }
         for (int i = 1; i <= 8; ++i) {
             ChessPosition endPosition = new ChessPosition(myRow - i, myCol - i);
@@ -44,14 +50,18 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(myPosition, endPosition, null));
             }
-            if (isEnemy(board, myPosition, endPosition)) break;
+            if (isEnemy(board, myPosition, endPosition)) {
+                break;
+            }
         }
 
         return moves;
     }
 
     private boolean isBlocked(ChessBoard board, ChessPosition myPosition, ChessPosition endPosition) {
-        if (!endPosition.isValid()) return true;
+        if (!endPosition.isValid()) {
+            return true;
+        }
         if (board.getPiece(endPosition) == null) {
             return false;
         }
@@ -59,7 +69,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     }
 
     private boolean isEnemy(ChessBoard board, ChessPosition myPosition, ChessPosition endPosition) {
-        if (isBlocked(board, myPosition, endPosition)) return false;
+        if (isBlocked(board, myPosition, endPosition)) {
+            return false;
+        }
         if (board.getPiece(endPosition) == null) {
             return false;
         }
