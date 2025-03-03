@@ -62,7 +62,9 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
     }
 
     private boolean isNotForwardBlocked(ChessBoard board, ChessPosition currentPos, ChessPosition endPos) {
-        if (!endPos.isValid()) return false;
+        if (!endPos.isValid()) {
+            return false;
+        }
         return board.getPiece(endPos) == null;
     };
 }

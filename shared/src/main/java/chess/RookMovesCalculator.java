@@ -17,7 +17,9 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(position, endPosition, null));
             }
-            if (board.getPiece(endPosition) != null) break;
+            if (board.getPiece(endPosition) != null) {
+                break;
+            }
         }
         for (int i = 1; i < 8; ++i) {
             ChessPosition endPosition = new ChessPosition(currentRow - i, currentCol);
@@ -26,7 +28,9 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(position, endPosition, null));
             }
-            if (board.getPiece(endPosition) != null) break;
+            if (board.getPiece(endPosition) != null) {
+                break;
+            }
         }
         for (int i = 1; i < 8; ++i) {
             ChessPosition endPosition = new ChessPosition(currentRow, currentCol + i);
@@ -35,7 +39,9 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(position, endPosition, null));
             }
-            if (board.getPiece(endPosition) != null) break;
+            if (board.getPiece(endPosition) != null) {
+                break;
+            }
         }
         for (int i = 1; i < 8; ++i) {
             ChessPosition endPosition = new ChessPosition(currentRow, currentCol - i);
@@ -44,14 +50,18 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             } else {
                 moves.add(new ChessMove(position, endPosition, null));
             }
-            if (board.getPiece(endPosition) != null) break;
+            if (board.getPiece(endPosition) != null) {
+                break;
+            }
         }
 
         return moves;
     };
 
     private boolean isBlocked(ChessBoard board, ChessPosition currentPos, ChessPosition endPos) {
-        if (!endPos.isValid()) return true;
+        if (!endPos.isValid()) {
+            return true;
+        }
         if (board.getPiece(endPos) == null) {
             return false;
         }

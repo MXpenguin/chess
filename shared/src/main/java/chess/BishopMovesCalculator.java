@@ -4,108 +4,65 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
 
-        int currentRow = position.getRow();
-        int currentCol = position.getColumn();
-        
-        // upper right diagonal moves
-        for (int i = 1; i < 8; ++i) {
-            int endRow = currentRow + i;
-            int endCol = currentCol + i;
+        int myRow = myPosition.getRow();
+        int myCol = myPosition.getColumn();
 
-            // Check if out of bounds
-            if (endRow > 8 || endCol > 8) {
+        for (int i = 1; i <= 8; ++i) {
+            ChessPosition endPosition = new ChessPosition(myRow + i, myCol + i);
+            if (isBlocked(board, myPosition, endPosition)) {
                 break;
+            } else {
+                moves.add(new ChessMove(myPosition, endPosition, null));
             }
-
-            ChessPosition endPosition = new ChessPosition(endRow, endCol);
-
-            // Check if end square blocked
-            ChessPiece endPositionPiece = board.getPiece(endPosition);
-            if (endPositionPiece != null) {
-                if (endPositionPiece.getTeamColor() != board.getPiece(position).getTeamColor()) {
-                    moves.add(new ChessMove(position, endPosition, null));
-                }
-                break;
-            }
-
-            moves.add(new ChessMove(position, endPosition, null));
+            if (isEnemy(board, myPosition, endPosition)) break;
         }
-
-        // upper left diagonal moves
-        for (int i = 1; i < 8; ++i) {
-            int endRow = currentRow + i;
-            int endCol = currentCol - i;
-
-            // Check if out of bounds
-            if (endRow > 8 || endCol < 1) {
+        for (int i = 1; i <= 8; ++i) {
+            ChessPosition endPosition = new ChessPosition(myRow - i, myCol + i);
+            if (isBlocked(board, myPosition, endPosition)) {
                 break;
+            } else {
+                moves.add(new ChessMove(myPosition, endPosition, null));
             }
-
-            ChessPosition endPosition = new ChessPosition(endRow, endCol);
-
-            // Check if end square blocked
-            ChessPiece endPositionPiece = board.getPiece(endPosition);
-            if (endPositionPiece != null) {
-                if (endPositionPiece.getTeamColor() != board.getPiece(position).getTeamColor()) {
-                    moves.add(new ChessMove(position, endPosition, null));
-                }
-                break;
-            }
-
-            moves.add(new ChessMove(position, endPosition, null));
+            if (isEnemy(board, myPosition, endPosition)) break;
         }
-
-        // lower right diagonal moves
-        for (int i = 1; i < 8; ++i) {
-            int endRow = currentRow - i;
-            int endCol = currentCol + i;
-
-            // Check if out of bounds
-            if (endRow < 1 || endCol > 8) {
+        for (int i = 1; i <= 8; ++i) {
+            ChessPosition endPosition = new ChessPosition(myRow + i, myCol - i);
+            if (isBlocked(board, myPosition, endPosition)) {
                 break;
+            } else {
+                moves.add(new ChessMove(myPosition, endPosition, null));
             }
-
-            ChessPosition endPosition = new ChessPosition(endRow, endCol);
-
-            // Check if end square blocked
-            ChessPiece endPositionPiece = board.getPiece(endPosition);
-            if (endPositionPiece != null) {
-                if (endPositionPiece.getTeamColor() != board.getPiece(position).getTeamColor()) {
-                    moves.add(new ChessMove(position, endPosition, null));
-                }
-                break;
-            }
-
-            moves.add(new ChessMove(position, endPosition, null));
+            if (isEnemy(board, myPosition, endPosition)) break;
         }
-
-        // lower left diagonal moves
-        for (int i = 1; i < 8; ++i) {
-            int endRow = currentRow - i;
-            int endCol = currentCol - i;
-
-            // Check if out of bounds
-            if (endRow < 1 || endCol < 1) {
+        for (int i = 1; i <= 8; ++i) {
+            ChessPosition endPosition = new ChessPosition(myRow - i, myCol - i);
+            if (isBlocked(board, myPosition, endPosition)) {
                 break;
+            } else {
+                moves.add(new ChessMove(myPosition, endPosition, null));
             }
-
-            ChessPosition endPosition = new ChessPosition(endRow, endCol);
-
-            // Check if end square blocked
-            ChessPiece endPositionPiece = board.getPiece(endPosition);
-            if (endPositionPiece != null) {
-                if (endPositionPiece.getTeamColor() != board.getPiece(position).getTeamColor()) {
-                    moves.add(new ChessMove(position, endPosition, null));
-                }
-                break;
-            }
-
-            moves.add(new ChessMove(position, endPosition, null));
+            if (isEnemy(board, myPosition, endPosition)) break;
         }
 
         return moves;
-    };
+    }
+
+    private boolean isBlocked(ChessBoard board, ChessPosition myPosition, ChessPosition endPosition) {
+        if (!endPosition.isValid()) return true;
+        if (board.getPiece(endPosition) == null) {
+            return false;
+        }
+        return board.getPiece(myPosition).getTeamColor() == board.getPiece(endPosition).getTeamColor();
+    }
+
+    private boolean isEnemy(ChessBoard board, ChessPosition myPosition, ChessPosition endPosition) {
+        if (isBlocked(board, myPosition, endPosition)) return false;
+        if (board.getPiece(endPosition) == null) {
+            return false;
+        }
+        return board.getPiece(myPosition).getTeamColor() != board.getPiece(endPosition).getTeamColor();
+    }
 }

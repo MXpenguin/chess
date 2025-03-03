@@ -54,7 +54,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null) return null;
+        if (piece == null) {
+            return null;
+        }
 
         Collection<ChessMove> possibleMoves
                 = piece.pieceMoves(board, startPosition);
@@ -152,7 +154,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPos = getKingPosition(teamColor);
-        if (kingPos == null) return false;
+        if (kingPos == null) {
+            return false;
+        }
 
         TeamColor enemyColor;
         if (teamColor == TeamColor.WHITE) {
@@ -183,11 +187,15 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (!isInCheck(teamColor)) return false;
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
 
         Collection<ChessPosition> positions = getFriendPositions(teamColor);
         for (ChessPosition pos : positions) {
-            if (!validMoves(pos).isEmpty()) return false;
+            if (!validMoves(pos).isEmpty()) {
+                return false;
+            }
         }
 
         return true;
@@ -201,11 +209,15 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) return false;
+        if (isInCheck(teamColor)) {
+            return false;
+        }
 
         Collection<ChessPosition> positions = getFriendPositions(teamColor);
         for (ChessPosition pos : positions) {
-            if (!validMoves(pos).isEmpty()) return false;
+            if (!validMoves(pos).isEmpty()) {
+                return false;
+            }
         }
 
         return true;

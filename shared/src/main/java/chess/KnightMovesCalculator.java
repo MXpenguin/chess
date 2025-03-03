@@ -19,12 +19,7 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
                 if (!isBlocked(board, position, endPosition)) {
                     moves.add(new ChessMove(position, endPosition, null));
                 }
-            }
-        }
-
-        for (int i : jumpTwo) {
-            for (int j : jumpOne) {
-                ChessPosition endPosition = new ChessPosition(currentRow + i, currentCol + j);
+                endPosition = new ChessPosition(currentRow + j, currentCol + i);
                 if (!isBlocked(board, position, endPosition)) {
                     moves.add(new ChessMove(position, endPosition, null));
                 }
@@ -41,7 +36,9 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
     };
 
     private boolean isBlocked(ChessBoard board, ChessPosition currentPos, ChessPosition endPos) {
-        if (!isValidPosition(endPos)) return true;
+        if (!isValidPosition(endPos)) {
+            return true;
+        }
         if (board.getPiece(endPos) == null) {
             return false;
         }
