@@ -1,10 +1,8 @@
 package service;
 
 import dataaccess.*;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
 import resultsandrequests.*;
-import spark.utils.Assert;
 
 public class UserServiceTests {
 

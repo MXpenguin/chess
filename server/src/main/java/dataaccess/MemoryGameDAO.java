@@ -5,6 +5,9 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Memory implementation of game database
+ */
 public class MemoryGameDAO implements GameDAO {
     private final Collection<GameData> gameDataCollection;
 
@@ -12,26 +15,41 @@ public class MemoryGameDAO implements GameDAO {
         gameDataCollection = new ArrayList<GameData>();
     }
 
+    /**
+     * Clear database
+     */
     @Override
     public void clear() throws DataAccessException {
         gameDataCollection.clear();
     }
 
+    /**
+     * Create game
+     *
+     * @param gameData: GameData object
+     */
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
         gameDataCollection.add(gameData);
     }
 
-//    @Override
-//    public GameData getGame(String gameID) throws DataAccessException {
-//
-//    }
-
+    /**
+     * List games
+     *
+     * @return collection of game data objects
+     */
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
         return gameDataCollection;
     }
 
+    /**
+     * Update game with added user
+     *
+     * @param gameID: id of game to modify
+     * @param playerColor: game color to add player
+     * @param username: user to add
+     */
     @Override
     public void updateGame(int gameID, String playerColor, String username) throws DataAccessException {
         GameData game = getGame(gameID);

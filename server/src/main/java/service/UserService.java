@@ -7,9 +7,11 @@ import model.AuthData;
 import model.UserData;
 import resultsandrequests.*;
 
-import javax.xml.crypto.Data;
 import java.util.UUID;
 
+/**
+ * Service layer for user endpoints
+ */
 public class UserService {
 
     private final UserDAO userDataAccess;
@@ -20,11 +22,20 @@ public class UserService {
         this.authDataAccess = authDataAccess;
     }
 
+    /**
+     * Clear user and auth databases
+     */
     public void clear() throws DataAccessException {
         userDataAccess.clear();
         authDataAccess.clear();
     }
 
+    /**
+     * Register user
+     *
+     * @param registerRequest: Request object
+     * @return RegisterResult: Result object
+     */
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         String username = registerRequest.username();
         String password = registerRequest.password();
@@ -46,6 +57,12 @@ public class UserService {
         return new RegisterResult(username, authToken);
     }
 
+    /**
+     * Login user
+     *
+     * @param loginRequest: Request object
+     * @return LoginResult: Result object
+     */
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         String username = loginRequest.username();
         UserData user = userDataAccess.getUser(username);
@@ -59,6 +76,12 @@ public class UserService {
         return new LoginResult(username, authToken);
     }
 
+    /**
+     * Logout user
+     *
+     * @param logoutRequest: Request object
+     * @return LogoutResult: Result object
+     */
     public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
         String authToken = logoutRequest.authToken();
 

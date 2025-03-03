@@ -4,14 +4,15 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
-import model.AuthData;
 import model.GameData;
 import resultsandrequests.*;
 
 import java.util.Collection;
 import java.util.UUID;
 
+/**
+ * Service layer for game endpoints
+ */
 public class GameService {
     private final AuthDAO authDataAccess;
     private final GameDAO gameDataAccess;
@@ -21,11 +22,20 @@ public class GameService {
         this.gameDataAccess = gameDataAccess;
     }
 
+    /**
+     * Clear game and auth databases
+     */
     public void clear() throws DataAccessException {
         authDataAccess.clear();
         gameDataAccess.clear();
     }
 
+    /**
+     * Create game
+     *
+     * @param createGameRequest: Request object
+     * @return CreateGameResult: Result object
+     */
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
         String authToken = createGameRequest.getAuthToken();
 
@@ -38,6 +48,12 @@ public class GameService {
         return new CreateGameResult(generateGameID(gameName));
     }
 
+    /**
+     * List games
+     *
+     * @param listGamesRequest: Request object
+     * @return ListGamesResult: Result object
+     */
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException {
         String authToken = listGamesRequest.authToken();
 
@@ -48,6 +64,12 @@ public class GameService {
         return new ListGamesResult(gameDataAccess.listGames());
     }
 
+    /**
+     * Join game
+     *
+     * @param request: Request object
+     * @return JoinGameResult: Result object
+     */
     public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
         String authToken = request.getAuthToken();
 
