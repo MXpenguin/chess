@@ -6,9 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
-import spark.utils.Assert;
 
-public class SQLUserDAOTests {
+public class SQLAuthDAOTests {
     private UserDAO userDAO;
 
     private String username1;
