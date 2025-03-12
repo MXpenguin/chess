@@ -24,7 +24,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Failed to drop tables: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Failed to truncate tables: %s", ex.getMessage()));
         }
     }
 
@@ -34,13 +34,13 @@ public class SQLUserDAO implements UserDAO{
         String password = userData.password();
         String email = userData.email();
 
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO userTable (username, password, email) VALUES (?, ?, ?)";
 //        var json = new Gson().toJson(pet);
 //        var id = executeUpdate(statement, pet.name(), pet.type(), json);
 //        return new Pet(id, pet.name(), pet.type());
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(
-                    "INSERT INTO user (username, password, email) VALUES(?, ?, ?)",
+                    "INSERT INTO userTable (username, password, email) VALUES(?, ?, ?)",
                     RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, username);
                 preparedStatement.setString(2, password);//TODO
@@ -58,7 +58,7 @@ public class SQLUserDAO implements UserDAO{
         String password;
         String email;
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT password, email FROM user WHERE username=?";
+            var statement = "SELECT password, email FROM userTable WHERE username=?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
                 try (var resultSet = preparedStatement.executeQuery()) {
@@ -77,7 +77,7 @@ public class SQLUserDAO implements UserDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
+            CREATE TABLE IF NOT EXISTS  userTable (
               `id` int NOT NULL AUTO_INCREMENT,
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
@@ -91,7 +91,7 @@ public class SQLUserDAO implements UserDAO{
 
     private final String[] dropStatements = {
             """
-            TRUNCATE TABLE user
+            TRUNCATE TABLE userTable
             """
     };
 
@@ -103,7 +103,6 @@ public class SQLUserDAO implements UserDAO{
                     preparedStatement.executeUpdate();
                 }
             }
-            System.out.println("First print statement reached");
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
         }
