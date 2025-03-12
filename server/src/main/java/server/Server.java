@@ -16,8 +16,10 @@ public class Server {
 
     public Server() {
         AuthDAO authDAO = new MemoryAuthDAO();
-        this.userService = new UserService(new MemoryUserDAO(), authDAO);
-        this.gameService = new GameService(authDAO, new MemoryGameDAO());
+        UserDAO userDAO = new MemoryUserDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+        this.userService = new UserService(userDAO, authDAO);
+        this.gameService = new GameService(authDAO, gameDAO);
     }
 
     public int run(int desiredPort) {
