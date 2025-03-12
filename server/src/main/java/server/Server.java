@@ -15,6 +15,7 @@ public class Server {
     private final GameService gameService;
 
     public Server() {
+        // Edit these to switch between a memory and persistent storage
         AuthDAO authDAO = new MemoryAuthDAO();
         UserDAO userDAO = new MemoryUserDAO();
         GameDAO gameDAO = new MemoryGameDAO();
