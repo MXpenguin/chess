@@ -35,13 +35,9 @@ public class SQLUserDAO implements UserDAO{
         String email = userData.email();
 
         var statement = "INSERT INTO userTable (username, password, email) VALUES (?, ?, ?)";
-//        var json = new Gson().toJson(pet);
-//        var id = executeUpdate(statement, pet.name(), pet.type(), json);
-//        return new Pet(id, pet.name(), pet.type());
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(
-                    "INSERT INTO userTable (username, password, email) VALUES(?, ?, ?)",
-                    RETURN_GENERATED_KEYS)) {
+                    statement, RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, username);
                 preparedStatement.setString(2, password);//TODO
                 preparedStatement.setString(3, email);
@@ -49,7 +45,7 @@ public class SQLUserDAO implements UserDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Failed to add user to database: %s", ex.getMessage()));
         }
     }
 
@@ -70,7 +66,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Failed to read data: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Failed to read user data: %s", e.getMessage()));
         }
         return null;
     }
