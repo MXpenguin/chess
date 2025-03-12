@@ -81,13 +81,32 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Failed to read auth data: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Failed to read games data: %s", e.getMessage()));
         }
     }
 
     @Override
     public void updateGame(int gameID, String playerColor, String username) throws DataAccessException {
+        String colorForTable;
+        if ("WHITE".equals(playerColor)) {
+            colorForTable = "whiteUsername";
+        } else if ("BLACK".equals(playerColor)) {
+            colorForTable = "blackUsername";
+        } else {
+            throw new DataAccessException("bad color input");
+        }
 
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "UPDATE gameTable SET " + colorForTable + "=? WHERE gameID=?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setInt(2, gameID);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Failed to update game data: %s", e.getMessage()));
+        }
     }
 
     private final String[] createStatements = {
@@ -95,8 +114,8 @@ public class SQLGameDAO implements GameDAO{
             CREATE TABLE IF NOT EXISTS  gameTable (
               `id` int NOT NULL AUTO_INCREMENT,
               `gameID` int NOT NULL,
-              `whiteUsername` varchar(256) NOT NULL,
-              `blackUsername` varchar(256) NOT NULL,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
               `gameName` varchar(256) NOT NULL,
               `chessGame` TEXT NOT NULL,
               PRIMARY KEY (`id`),
