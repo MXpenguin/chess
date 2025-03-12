@@ -8,6 +8,7 @@ import service.UserService;
 import spark.*;
 
 import javax.xml.crypto.Data;
+import java.util.Map;
 
 public class Server {
 
@@ -16,9 +17,10 @@ public class Server {
 
     public Server() {
         // Edit these to switch between a memory and persistent storage
-        AuthDAO authDAO = new MemoryAuthDAO();
+        AuthDAO authDAO = null;
         UserDAO userDAO = null;
         try {
+            authDAO = new SQLAuthDAO();
             userDAO = new SQLUserDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -65,7 +67,7 @@ public class Server {
             return "";
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 
@@ -84,7 +86,7 @@ public class Server {
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 
@@ -102,7 +104,7 @@ public class Server {
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 
@@ -120,7 +122,7 @@ public class Server {
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 
@@ -139,7 +141,7 @@ public class Server {
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 
@@ -157,7 +159,7 @@ public class Server {
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 
@@ -178,7 +180,7 @@ public class Server {
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);
-            return "";
+            return new Gson().toJson(Map.of("message", e.getMessage()));
         }
     }
 }

@@ -2,11 +2,17 @@ package dataaccess;
 
 import model.AuthData;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLAuthDAO implements AuthDAO {
+
+    public SQLAuthDAO() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
     public void clear() throws DataAccessException {
         DatabaseManager.createDatabase();
