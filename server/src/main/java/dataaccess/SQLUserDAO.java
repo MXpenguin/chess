@@ -1,9 +1,12 @@
 package dataaccess;
 
+import com.google.gson.Gson;
 import model.UserData;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLUserDAO implements UserDAO{
 
@@ -30,6 +33,24 @@ public class SQLUserDAO implements UserDAO{
         String username = userData.username();
         String password = userData.password();
         String email = userData.email();
+
+        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+//        var json = new Gson().toJson(pet);
+//        var id = executeUpdate(statement, pet.name(), pet.type(), json);
+//        return new Pet(id, pet.name(), pet.type());
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(
+                    "INSERT INTO user (username, password, email) VALUES(?, ?, ?)",
+                    RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, password);//TODO
+                preparedStatement.setString(3, email);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
+        }
     }
 
     @Override
