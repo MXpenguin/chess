@@ -75,7 +75,7 @@ public class SQLUserDAO implements UserDAO{
         if (plainPassword == null) {
             return false;
         }
-        return hashPassword(plainPassword).equals(databasePassword);
+        return BCrypt.checkpw(plainPassword, databasePassword);
     }
 
     private String hashPassword(String password) {
