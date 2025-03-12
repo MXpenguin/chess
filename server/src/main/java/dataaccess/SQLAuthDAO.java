@@ -10,7 +10,15 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 public class SQLAuthDAO implements AuthDAO {
 
     public SQLAuthDAO() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase("""
+            CREATE TABLE IF NOT EXISTS  authTable (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(username)
+            )
+            """);
     }
 
     @Override
@@ -79,41 +87,9 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  authTable (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `authToken` varchar(256) NOT NULL,
-              `username` varchar(256) NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(username)
-            )
-            """
-    };
-
     private final String[] dropStatements = {
             """
             TRUNCATE TABLE authTable
             """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            String statement = """
-            CREATE TABLE IF NOT EXISTS  authTable (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `authToken` varchar(256) NOT NULL,
-              `username` varchar(256) NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(username)
-            )
-            """;
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
-        }
-    }
 }

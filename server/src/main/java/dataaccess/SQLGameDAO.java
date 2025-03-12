@@ -15,7 +15,18 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase("""
+            CREATE TABLE IF NOT EXISTS  gameTable (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `gameID` int NOT NULL,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256) NOT NULL,
+              `chessGame` TEXT NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(gameID)
+            )
+            """);
     }
 
     @Override
@@ -109,47 +120,9 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  gameTable (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `gameID` int NOT NULL,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
-              `gameName` varchar(256) NOT NULL,
-              `chessGame` TEXT NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(gameID)
-            )
-            """
-    };
-
     private final String[] dropStatements = {
             """
             TRUNCATE TABLE gameTable
             """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            String statement = """
-            CREATE TABLE IF NOT EXISTS  gameTable (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `gameID` int NOT NULL,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
-              `gameName` varchar(256) NOT NULL,
-              `chessGame` TEXT NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(gameID)
-            )
-            """;
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
-        }
-    }
 }
