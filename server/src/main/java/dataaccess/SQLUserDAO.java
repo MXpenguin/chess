@@ -10,16 +10,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 public class SQLUserDAO implements UserDAO{
 
     public SQLUserDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase("""
-            CREATE TABLE IF NOT EXISTS  userTable (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(username)
-            )
-            """);
+        configureDatabase();
     }
 
     @Override
@@ -91,9 +82,35 @@ public class SQLUserDAO implements UserDAO{
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  userTable (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(username)
+            )
+            """
+    };
+
     private final String[] dropStatements = {
             """
             TRUNCATE TABLE userTable
             """
     };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
+        }
+    }
 }
