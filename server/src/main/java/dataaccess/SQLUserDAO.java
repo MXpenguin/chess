@@ -1,9 +1,8 @@
 package dataaccess;
 
-import com.google.gson.Gson;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -39,7 +38,7 @@ public class SQLUserDAO implements UserDAO{
             try (var preparedStatement = conn.prepareStatement(
                     statement, RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, username);
-                preparedStatement.setString(2, password);//TODO
+                preparedStatement.setString(2, hashPassword(password));
                 preparedStatement.setString(3, email);
 
                 preparedStatement.executeUpdate();
@@ -69,6 +68,18 @@ public class SQLUserDAO implements UserDAO{
             throw new DataAccessException(String.format("Failed to read user data: %s", e.getMessage()));
         }
         return null;
+    }
+
+    @Override
+    public boolean verifyPasswords(String plainPassword, String databasePassword) {
+        if (plainPassword == null) {
+            return false;
+        }
+        return hashPassword(plainPassword).equals(databasePassword);
+    }
+
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     private final String[] createStatements = {

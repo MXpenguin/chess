@@ -67,7 +67,7 @@ public class UserService {
         String username = loginRequest.username();
         UserData user = userDataAccess.getUser(username);
 
-        if (user == null || !loginRequest.password().equals(user.password())) {
+        if (user == null || !userDataAccess.verifyPasswords(loginRequest.password(), user.password())) {
             return new LoginResult("Error: unauthorized");
         }
 

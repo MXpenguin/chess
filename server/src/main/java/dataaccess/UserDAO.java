@@ -9,4 +9,5 @@ public interface UserDAO {
     void createUser(UserData userData) throws DataAccessException;
     UserData getUser(String username) throws DataAccessException;
 
+    boolean verifyPasswords(String plainPassword, String databasePassword);
 }

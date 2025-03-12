@@ -42,7 +42,7 @@ public class SQLGameDAO implements GameDAO{
 
         String gameJson = new Gson().toJson(chessGame);
 
-        var statement = "INSERT INTO gameTable (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO gameTable (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)";
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(
                     statement, RETURN_GENERATED_KEYS)) {

@@ -51,4 +51,12 @@ public class MemoryUserDAO implements UserDAO {
         }
         return null;
     }
+
+    @Override
+    public boolean verifyPasswords(String plainPassword, String databasePassword) {
+        if (plainPassword == null) {
+            return false;
+        }
+        return plainPassword.equals(databasePassword);
+    }
 }
