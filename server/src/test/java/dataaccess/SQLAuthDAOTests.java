@@ -1,140 +1,121 @@
 package dataaccess;
 
-import model.UserData;
+import model.AuthData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
 
 public class SQLAuthDAOTests {
-    private UserDAO userDAO;
+    private AuthDAO authDAO;
 
     private String username1;
     private String username2;
-    private String password1;
-    private String password2;
-    private String email1;
-    private String email2;
-    private UserData user1;
-    private UserData user2;
-    private String bademail;
-    private UserData badUser;
+    private String authToken1;
+    private String authToken2;
+    private AuthData authData1;
+    private AuthData authData2;
+    private AuthData authDataEmpty;
 
     @BeforeEach
     void setUp() {
         try {
-            userDAO = new SQLUserDAO();
+            authDAO = new SQLAuthDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        username1 = "Alice";
-        username2 = "Bob";
-        password1 = "supersecretpassword";
-        password2 = "abcdefg";
-        email1 = "alice_32@mail.org";
-        email2 = "bobbyboy15@themail.com";
-        user1 = new UserData(username1, password1, email1);
-        user2 = new UserData(username2, password2, email2);
-        bademail = "'bademail'); TRUNCATE userTable;";
-        badUser = new UserData(username2, password2, bademail);
-    }
-
-    @Test
-    @DisplayName("Verify passwords")
-    public void successVerifyPasswords() {
-        String hashedPassword1 = BCrypt.hashpw(password1, BCrypt.gensalt());
-        String hashedPassword2 = BCrypt.hashpw(password2, BCrypt.gensalt());
-
-        Assertions.assertTrue(userDAO.verifyPasswords(password1, hashedPassword1),
-                "password hash check failed");
-        Assertions.assertTrue(userDAO.verifyPasswords(password2, hashedPassword2),
-                "password hash check failed");
-    }
-
-    @Test
-    @DisplayName("Check bad passwords")
-    public void failVerifyPasswords() {
-        String hashedPassword1 = BCrypt.hashpw(password1, BCrypt.gensalt());
-        String hashedPassword2 = BCrypt.hashpw(password2, BCrypt.gensalt());
-
-        Assertions.assertFalse(userDAO.verifyPasswords(password1, hashedPassword2),
-                "password hash check returned true for bad passwords");
-        Assertions.assertFalse(userDAO.verifyPasswords(password2, hashedPassword1),
-                "password hash check returned true for bad passwords");
+        username1 = "alice";
+        username2 = "bob";
+        authToken1 = "iamanauthtoken";
+        authToken2 = "heoiu325w4hfksdfDSFjdsahf3275FSDf983C2749328lkjhdsf";
+        authData1 = new AuthData(authToken1, username1);
+        authData2 = new AuthData(authToken2, username2);
+        authDataEmpty = new AuthData(null, null);
     }
 
     @Test
     @DisplayName("Clear")
     public void successClear() throws DataAccessException {
-        userDAO.clear();
+        authDAO.clear();
 
-        Assertions.assertNull(userDAO.getUser(username1),
+        Assertions.assertNull(authDAO.getAuth(authToken1),
                 "database not empty initially");
-        userDAO.createUser(user1);
-        Assertions.assertNotNull(userDAO.getUser(username1),
-                "failed to add user to database");
+        authDAO.createAuth(authData1);
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
+                "failed to add auth to database");
 
-        userDAO.clear();
-        Assertions.assertNull(userDAO.getUser(username1),
+        authDAO.clear();
+        Assertions.assertNull(authDAO.getAuth(authToken1),
                 "database failed to clear");
     }
 
     @Test
-    @DisplayName("Create user")
-    public void successCreateUser() throws DataAccessException {
-        userDAO.clear();
+    @DisplayName("Create auth")
+    public void successCreateAuth() throws DataAccessException {
+        authDAO.clear();
 
-        Assertions.assertNull(userDAO.getUser(username1),
-                "database not empty");
-        userDAO.createUser(user1);
-        Assertions.assertNotNull(userDAO.getUser(username1),
-                "failed to add user to database");
-        Assertions.assertEquals(email1, userDAO.getUser(username1).email(),
-                "user data not correct");
-
-        userDAO.clear();
-
-        Assertions.assertNull(userDAO.getUser(username1),
-                "database not empty");
-        userDAO.createUser(badUser);
-        Assertions.assertNotNull(userDAO.getUser(badUser.username()),
-                "bad input truncated table");
-        Assertions.assertEquals(bademail, userDAO.getUser(badUser.username()).email(),
-                "user data not correct");
+        Assertions.assertNull(authDAO.getAuth(authToken1),
+                "database not empty initially");
+        authDAO.createAuth(authData1);
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
+                "failed to add auth to database");
     }
 
     @Test
-    @DisplayName("Fail user creation")
-    public void failCreateUser() throws DataAccessException {
-        userDAO.clear();
+    @DisplayName("Fail auth creation")
+    public void failCreateAuth() throws DataAccessException {
+        authDAO.clear();
 
-        UserData emptyUser = new UserData(null, null, null);
-
-        Assertions.assertThrows(DataAccessException.class, () -> userDAO.createUser(emptyUser),
+        Assertions.assertThrows(DataAccessException.class, () -> authDAO.createAuth(authDataEmpty),
                 "did not throw exception upon attempting to add null values to table");
     }
 
     @Test
-    @DisplayName("Get user")
-    public void successGetUser() throws DataAccessException {
-        userDAO.clear();
+    @DisplayName("Get auth")
+    public void successGetAuth() throws DataAccessException {
+        authDAO.clear();
 
-        Assertions.assertNull(userDAO.getUser(username1),
+        Assertions.assertNull(authDAO.getAuth(authToken1),
                 "database not empty");
-        userDAO.createUser(user1);
-        Assertions.assertNotNull(userDAO.getUser(username1),
+        authDAO.createAuth(authData1);
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
                 "failed to add user to database");
-        Assertions.assertEquals(email1, userDAO.getUser(username1).email(),
+        Assertions.assertEquals(username1, authDAO.getAuth(authToken1).username(),
                 "user data not correct");
     }
 
     @Test
     @DisplayName("Fail to get user")
-    public void failGetUser() throws DataAccessException {
-        userDAO.clear();
+    public void failGetAuth() throws DataAccessException {
+        authDAO.clear();
 
-        Assertions.assertNull(userDAO.getUser(username2),
-                "somehow got user that wasn't there");
+        Assertions.assertNull(authDAO.getAuth(authToken1),
+                "somehow got auth that wasn't there");
+    }
+
+    @Test
+    @DisplayName("Delete auth")
+    public void successDeleteAuth() throws DataAccessException {
+        authDAO.clear();
+
+        authDAO.createAuth(authData1);
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
+                "failed to add auth to database");
+        authDAO.deleteAuth(authToken1);
+        Assertions.assertNull(authDAO.getAuth(authToken1),
+                "failed to delete auth from database");
+    }
+
+    @Test
+    @DisplayName("Fail to delete auth")
+    public void failDeleteAuth() throws DataAccessException {
+        authDAO.clear();
+
+        authDAO.createAuth(authData1);
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
+                "failed to add auth to database");
+        authDAO.deleteAuth(authToken2);
+        Assertions.assertNotNull(authDAO.getAuth(authToken1),
+                "somehow deleted auth depsite bad input");
     }
 }
