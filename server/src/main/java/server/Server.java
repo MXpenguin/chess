@@ -17,7 +17,12 @@ public class Server {
     public Server() {
         // Edit these to switch between a memory and persistent storage
         AuthDAO authDAO = new MemoryAuthDAO();
-        UserDAO userDAO = new MemoryUserDAO();
+        UserDAO userDAO = null;
+        try {
+            userDAO = new SQLUserDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         GameDAO gameDAO = new MemoryGameDAO();
         this.userService = new UserService(userDAO, authDAO);
         this.gameService = new GameService(authDAO, gameDAO);

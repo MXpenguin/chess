@@ -91,7 +91,7 @@ public class SQLUserDAO implements UserDAO{
 
     private final String[] dropStatements = {
             """
-            DROP TABLE user
+            TRUNCATE TABLE user
             """
     };
 
@@ -103,6 +103,7 @@ public class SQLUserDAO implements UserDAO{
                     preparedStatement.executeUpdate();
                 }
             }
+            System.out.println("First print statement reached");
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
         }
