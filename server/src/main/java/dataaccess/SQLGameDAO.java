@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-public class SQLGameDAO implements GameDAO{
+public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws DataAccessException {
         configureDatabase();
@@ -133,10 +133,20 @@ public class SQLGameDAO implements GameDAO{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
+            String statement = """
+            CREATE TABLE IF NOT EXISTS  gameTable (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `gameID` int NOT NULL,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256) NOT NULL,
+              `chessGame` TEXT NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(gameID)
+            )
+            """;
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Failed to configure database: %s", ex.getMessage()));
