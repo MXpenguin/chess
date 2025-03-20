@@ -5,7 +5,7 @@ package resultsandrequests;
  */
 public class CreateGameRequest {
     private final String gameName;
-    private String authToken;
+    private transient String authToken;
 
     public CreateGameRequest(String gameName) {
         this.gameName = gameName;
