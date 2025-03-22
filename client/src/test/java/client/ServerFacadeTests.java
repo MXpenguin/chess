@@ -165,7 +165,7 @@ public class ServerFacadeTests {
 
         CreateGameRequest request = new CreateGameRequest(gameName);
         request.setAuthToken(auth);
-        CreateGameResult createGameResult = facade.createGame(request);
+        int gameID = facade.createGame(request).getGameID();
 
         ListGamesResult listGamesResult = facade.listGames(new ListGamesRequest(auth));
 
@@ -176,7 +176,7 @@ public class ServerFacadeTests {
         Assertions.assertEquals(1, listGamesResult.getGames().size(),
                 "result does not have one game");
 
-        Assertions.assertEquals(createGameResult.getGameID(), listGamesResult.getGames().iterator().next().gameID(),
+        Assertions.assertEquals(gameID, listGamesResult.getGames().iterator().next().gameID(),
                 "game id in collection does not match game id that was added");
     }
 
@@ -189,5 +189,76 @@ public class ServerFacadeTests {
 
         Assertions.assertEquals("Error: unauthorized", exception.getMessage(),
                 "incorrect error message");
+    }
+
+    @Test
+    @DisplayName("Join game")
+    public void successJoinGame() throws ResponseException {
+        // register authorized users
+        String auth1 = facade.register(new RegisterRequest(
+                username1, password1, email1)).getAuthToken();
+        String auth2 = facade.register(new RegisterRequest(
+                username2, password2, email2)).getAuthToken();
+
+        // create game
+        CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
+        createGameRequest.setAuthToken(auth1);
+        int gameID = facade.createGame(createGameRequest).getGameID();
+
+        // join game
+        JoinGameRequest joinGameRequest1 = new JoinGameRequest("WHITE", gameID);
+        joinGameRequest1.setAuthToken(auth1);
+        JoinGameResult joinGameResult1 = facade.joinGame(joinGameRequest1);
+
+        JoinGameRequest joinGameRequest2 = new JoinGameRequest("BLACK", gameID);
+        joinGameRequest2.setAuthToken(auth2);
+        JoinGameResult joinGameResult2 = facade.joinGame(joinGameRequest2);
+
+        // assertions
+        Assertions.assertNull(joinGameResult1.getMessage(),
+                "result has error message, failed to join game");
+        Assertions.assertNull(joinGameResult2.getMessage(),
+                "result has error message, failed to join game");
+
+        // check database
+        try {
+            GameData game = new SQLGameDAO().listGames().iterator().next();
+            Assertions.assertEquals(username1, game.whiteUsername(),
+                    username1 + " not added as white team");
+            Assertions.assertEquals(username2, game.blackUsername(),
+                    username1 + " not added as white team");
+        } catch(DataAccessException e) {
+            throw new RuntimeException("a data access exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @DisplayName("Fail join game")
+    public void failJoinGame() throws ResponseException {
+        // register authorized users
+        String auth1 = facade.register(new RegisterRequest(
+                username1, password1, email1)).getAuthToken();
+        String auth2 = facade.register(new RegisterRequest(
+                username2, password2, email2)).getAuthToken();
+
+        // create game
+        CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
+        createGameRequest.setAuthToken(auth1);
+        int gameID = facade.createGame(createGameRequest).getGameID();
+
+        // join game
+        JoinGameRequest joinGameRequest1 = new JoinGameRequest("WHITE", gameID);
+        joinGameRequest1.setAuthToken(auth1);
+        JoinGameResult joinGameResult1 = facade.joinGame(joinGameRequest1);
+
+        JoinGameRequest joinGameRequest2 = new JoinGameRequest("BLACK", gameID);
+        joinGameRequest2.setAuthToken(auth2);
+        JoinGameResult joinGameResult2 = facade.joinGame(joinGameRequest2);
+
+        // assertions
+        Assertions.assertNull(joinGameResult1.getMessage(),
+                "result has error message, failed to join game");
+        Assertions.assertNull(joinGameResult2.getMessage(),
+                "result has error message, failed to join game");
     }
 }
