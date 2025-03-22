@@ -11,8 +11,6 @@ import server.ResponseException;
 import server.Server;
 import server.ServerFacade;
 
-import java.util.Collection;
-
 
 public class ServerFacadeTests {
 
@@ -235,11 +233,23 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Fail join game")
     public void failJoinGame() throws ResponseException {
+        // test unauthorized request
+        ResponseException exception1 = Assertions.assertThrows(ResponseException.class,
+                () -> facade.joinGame(new JoinGameRequest("WHITE", 0)));
+        Assertions.assertEquals("Error: unauthorized", exception1.getMessage());
+
         // register authorized users
         String auth1 = facade.register(new RegisterRequest(
                 username1, password1, email1)).getAuthToken();
         String auth2 = facade.register(new RegisterRequest(
                 username2, password2, email2)).getAuthToken();
+
+        // test bad request
+        JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 0);
+        joinGameRequest.setAuthToken(auth1);
+        ResponseException exception2 = Assertions.assertThrows(ResponseException.class,
+                () -> facade.joinGame(joinGameRequest));
+        Assertions.assertEquals("Error: bad request", exception2.getMessage());
 
         // create game
         CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
@@ -249,16 +259,13 @@ public class ServerFacadeTests {
         // join game
         JoinGameRequest joinGameRequest1 = new JoinGameRequest("WHITE", gameID);
         joinGameRequest1.setAuthToken(auth1);
-        JoinGameResult joinGameResult1 = facade.joinGame(joinGameRequest1);
+        facade.joinGame(joinGameRequest1);
 
-        JoinGameRequest joinGameRequest2 = new JoinGameRequest("BLACK", gameID);
+        // test joining already taken team color
+        JoinGameRequest joinGameRequest2 = new JoinGameRequest("WHITE", gameID);
         joinGameRequest2.setAuthToken(auth2);
-        JoinGameResult joinGameResult2 = facade.joinGame(joinGameRequest2);
-
-        // assertions
-        Assertions.assertNull(joinGameResult1.getMessage(),
-                "result has error message, failed to join game");
-        Assertions.assertNull(joinGameResult2.getMessage(),
-                "result has error message, failed to join game");
+        ResponseException exception3 = Assertions.assertThrows(ResponseException.class,
+                () -> facade.joinGame(joinGameRequest2));
+        Assertions.assertEquals("Error: already taken", exception3.getMessage());
     }
 }
