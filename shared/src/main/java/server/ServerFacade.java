@@ -19,6 +19,10 @@ public class ServerFacade {
         serverUrl = url;
     }
 
+    public ServerFacade(int port) {
+        serverUrl = "http://localhost:" + port;
+    }
+
     public RegisterResult register(RegisterRequest request) throws ResponseException {
         String path = "/user";
         String method = "POST";
@@ -44,7 +48,7 @@ public class ServerFacade {
         String path = "/game";
         String method = "GET";
         String authToken = request.authToken();
-        return makeRequest(path, method, authToken, "{}", ListGamesResult.class);
+        return makeRequest(path, method, authToken, null, ListGamesResult.class);
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws ResponseException {
@@ -74,8 +78,10 @@ public class ServerFacade {
                 http.addRequestProperty("authorization", authToken);
             }
 
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(body.getBytes());
+            if (body != null) {
+                try (OutputStream reqBody = http.getOutputStream()) {
+                    reqBody.write(body.getBytes());
+                }
             }
 
             http.connect();
@@ -95,7 +101,7 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    throw ResponseException.fromJson(respErr);
+                    throw ResponseException.fromJson(status, respErr);
                 }
             }
 
