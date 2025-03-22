@@ -150,9 +150,11 @@ public class ServerFacadeTests {
     @DisplayName("Fail create game")
     public void failCreateGame() throws ResponseException {
         ResponseException exception = Assertions.assertThrows(ResponseException.class,
-                () -> facade.createGame(new CreateGameRequest(gameName)));
+                () -> facade.createGame(new CreateGameRequest(gameName)),
+                "did not throw error for unauthorized game creation");
 
-        Assertions.assertEquals("Error: unauthorized", exception.getMessage());
+        Assertions.assertEquals("Error: unauthorized", exception.getMessage(),
+                "incorrect error message");
     }
 
     @Test
@@ -176,5 +178,16 @@ public class ServerFacadeTests {
 
         Assertions.assertEquals(createGameResult.getGameID(), listGamesResult.getGames().iterator().next().gameID(),
                 "game id in collection does not match game id that was added");
+    }
+
+    @Test
+    @DisplayName("Fail list games")
+    public void failListGames() throws ResponseException {
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> facade.listGames(new ListGamesRequest("not an authToken")),
+                "did not throw error for unauthorized request to list games");
+
+        Assertions.assertEquals("Error: unauthorized", exception.getMessage(),
+                "incorrect error message");
     }
 }
