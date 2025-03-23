@@ -1,6 +1,9 @@
 package client;
 
+import server.ResponseException;
 import server.ServerFacade;
+
+import java.util.Arrays;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;
@@ -15,10 +18,24 @@ public class PostLoginClient implements Client {
         this.authToken = authToken;
     }
 
-
     @Override
-    public String eval(String eval) {
-        return "";
+    public String eval(String input) {
+        try {
+            var tokens = input.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "create" -> create(params);
+                case "list" -> list(params);
+                case "join" -> join(params);
+                case "observe" -> observe(params);
+                case "logout" -> logout(params);
+                case "quit" -> "quit";
+                default -> help();
+            };
+        } catch (ResponseException ex) {
+            return ex.getMessage();
+        }
     }
 
     @Override
@@ -32,5 +49,14 @@ public class PostLoginClient implements Client {
                 quit
                 help
                 """;
+    }
+
+    @Override
+    public String welcome() {
+        return "Welcome " + username + ".";
+    }
+
+    private String create(String... params) {
+
     }
 }
