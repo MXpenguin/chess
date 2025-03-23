@@ -8,6 +8,14 @@ public class PostLoginClient implements Client {
 
     @Override
     public String help() {
-        return "";
+        return """
+                create <NAME>
+                list
+                join <ID> [WHITE|BLACK]
+                observe <ID>
+                logout
+                quit
+                help
+                """;
     }
 }
