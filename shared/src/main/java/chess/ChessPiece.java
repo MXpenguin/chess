@@ -14,7 +14,7 @@ public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -98,6 +98,39 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return "Piece[" + pieceColor + " " + type + "]";
+        String WHITE_KING = " ♔ ";
+        String WHITE_QUEEN = " ♕ ";
+        String WHITE_BISHOP = " ♗ ";
+        String WHITE_KNIGHT = " ♘ ";
+        String WHITE_ROOK = " ♖ ";
+        String WHITE_PAWN = " ♙ ";
+        String BLACK_KING = " ♚ ";
+        String BLACK_QUEEN = " ♛ ";
+        String BLACK_BISHOP = " ♝ ";
+        String BLACK_KNIGHT = " ♞ ";
+        String BLACK_ROOK = " ♜ ";
+        String BLACK_PAWN = " ♟ ";
+
+        String pieceToString;
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            pieceToString = switch(type) {
+                case KING -> WHITE_KING;
+                case QUEEN -> WHITE_QUEEN;
+                case BISHOP -> WHITE_BISHOP;
+                case KNIGHT -> WHITE_KNIGHT;
+                case ROOK -> WHITE_ROOK;
+                case PAWN -> WHITE_PAWN;
+            };
+        } else {
+            pieceToString = switch(type) {
+                case KING -> BLACK_KING;
+                case QUEEN -> BLACK_QUEEN;
+                case BISHOP -> BLACK_BISHOP;
+                case KNIGHT -> BLACK_KNIGHT;
+                case ROOK -> BLACK_ROOK;
+                case PAWN -> BLACK_PAWN;
+            };
+        }
+        return "\b" + pieceToString + "\b";
     }
 }
