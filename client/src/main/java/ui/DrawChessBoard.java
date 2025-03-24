@@ -29,7 +29,7 @@ public class DrawChessBoard {
 
     public String drawWhitePerspective() {
         StringBuilder boardBuilder = new StringBuilder();
-        boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   a   b  c   d   e  f   g  h\n");
+        boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   a   b  \u2009c  \u2009d   e  \u2009f   g  \u2009h\n");
         for (int row = 8; row >= 1; --row) {
             boardBuilder.append(SET_TEXT_COLOR_WHITE).append(row).append(" ");
             for (int col = 1; col <= 8; ++col) {
@@ -38,7 +38,7 @@ public class DrawChessBoard {
             boardBuilder.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_WHITE).append(" ").append(intToChar(row));
             boardBuilder.append("\n");
         }
-        boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   a   b  c   d   e  f   g  h");
+        boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   a   b  \u2009c  \u2009d   e  \u2009f   g  \u2009h");
 
         return boardBuilder.toString();
     }
