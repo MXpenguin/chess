@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import model.GameData;
 import resultsandrequests.*;
 import server.ResponseException;
@@ -118,15 +119,27 @@ public class PostLoginClient implements Client {
             return "Please provide a valid id within the range of games.";
         }
 
-        // join game
-        int gameId = gamesList.get(id-1).gameID();
-        JoinGameRequest request = new JoinGameRequest(color, gameId);
-        request.setAuthToken(authToken);
-        server.joinGame(request);
+        GameData game = gamesList.get(id-1);
 
-        new Repl(new GamePlayClient()).run();//TODO
+//        System.out.println(game);                   //TODO
+//        System.out.println(game.game());
+//        System.out.println(game.game().getBoard());
 
-        return welcome();
+        DrawChessBoard drawChessBoard = new DrawChessBoard(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), new ChessGame()));
+        if ("white".equals(color)) {
+            return drawChessBoard.drawWhitePerspective();
+        } else {
+            return drawChessBoard.drawBlackPerspective();
+        }
+
+        // join game //TODO
+//        int gameId = gamesList.get(id-1).gameID();
+//        JoinGameRequest request = new JoinGameRequest(color, gameId);
+//        request.setAuthToken(authToken);
+//        JoinGameResult result = server.joinGame(request);
+
+        //new Repl(new GamePlayClient()).run();//TODO
+        //return welcome();
     }
 
     private String observe(String... params) {
@@ -146,7 +159,7 @@ public class PostLoginClient implements Client {
         }
 
         GameData game = gamesList.get(id-1);
-        DrawChessBoard boardDrawer = new DrawChessBoard(game);
+        DrawChessBoard boardDrawer = new DrawChessBoard(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), new ChessGame()));
 
         return boardDrawer.drawWhitePerspective();
     }

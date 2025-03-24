@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.*;
 import resultsandrequests.*;
@@ -157,6 +158,7 @@ public class Server {
                     default -> res.status(500);
                 }
             }
+            System.out.println(new Gson().toJson(result));//TODO
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);

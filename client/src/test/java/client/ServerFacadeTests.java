@@ -176,6 +176,9 @@ public class ServerFacadeTests {
 
         Assertions.assertEquals(gameID, listGamesResult.getGames().iterator().next().gameID(),
                 "game id in collection does not match game id that was added");
+
+//        Assertions.assertNotNull(listGamesResult.getGames().iterator().next().game(),
+//                "no ChessGame");
     }
 
     @Test

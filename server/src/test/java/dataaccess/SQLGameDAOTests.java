@@ -85,6 +85,9 @@ public class SQLGameDAOTests {
         gameDAO.createGame(gameData);
         Assertions.assertEquals(1, gameDAO.listGames().size(),
                 "failed to add game to database");
+
+        Assertions.assertNotNull(gameDAO.listGames().iterator().next().game(),
+                "ChessGame is null");
     }
 
     @Test
