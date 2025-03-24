@@ -125,21 +125,14 @@ public class PostLoginClient implements Client {
 //        System.out.println(game.game());
 //        System.out.println(game.game().getBoard());
 
-        DrawChessBoard drawChessBoard = new DrawChessBoard(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), new ChessGame()));
+        DrawChessBoard drawChessBoard = new DrawChessBoard(
+                new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
+                        game.gameName(), new ChessGame()));
         if ("white".equals(color)) {
             return drawChessBoard.drawWhitePerspective();
         } else {
             return drawChessBoard.drawBlackPerspective();
         }
-
-        // join game //TODO
-//        int gameId = gamesList.get(id-1).gameID();
-//        JoinGameRequest request = new JoinGameRequest(color, gameId);
-//        request.setAuthToken(authToken);
-//        JoinGameResult result = server.joinGame(request);
-
-        //new Repl(new GamePlayClient()).run();//TODO
-        //return welcome();
     }
 
     private String observe(String... params) {
@@ -159,7 +152,9 @@ public class PostLoginClient implements Client {
         }
 
         GameData game = gamesList.get(id-1);
-        DrawChessBoard boardDrawer = new DrawChessBoard(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), new ChessGame()));
+        DrawChessBoard boardDrawer = new DrawChessBoard(
+                new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
+                        game.gameName(), new ChessGame()));
 
         return boardDrawer.drawWhitePerspective();
     }

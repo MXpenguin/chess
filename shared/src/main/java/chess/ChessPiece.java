@@ -98,37 +98,37 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        String WHITE_KING = " ♔ ";
-        String WHITE_QUEEN = " ♕ ";
-        String WHITE_BISHOP = " ♗ ";
-        String WHITE_KNIGHT = " ♘ ";
-        String WHITE_ROOK = " ♖ ";
-        String WHITE_PAWN = " ♙ ";
-        String BLACK_KING = " ♚ ";
-        String BLACK_QUEEN = " ♛ ";
-        String BLACK_BISHOP = " ♝ ";
-        String BLACK_KNIGHT = " ♞ ";
-        String BLACK_ROOK = " ♜ ";
-        String BLACK_PAWN = " ♟ ";
+        String whiteKing = " ♔ ";
+        String whiteQueen = " ♕ ";
+        String whiteBishop = " ♗ ";
+        String whiteKnight = " ♘ ";
+        String whiteRook = " ♖ ";
+        String whitePawn = " ♙ ";
+        String blackKing = " ♚ ";
+        String blackQueen = " ♛ ";
+        String blackBishop = " ♝ ";
+        String blackKnight = " ♞ ";
+        String blackRook = " ♜ ";
+        String blackPawn = " ♟ ";
 
         String pieceToString;
         if (pieceColor == ChessGame.TeamColor.WHITE) {
             pieceToString = switch(type) {
-                case KING -> WHITE_KING;
-                case QUEEN -> WHITE_QUEEN;
-                case BISHOP -> WHITE_BISHOP;
-                case KNIGHT -> WHITE_KNIGHT;
-                case ROOK -> WHITE_ROOK;
-                case PAWN -> WHITE_PAWN;
+                case KING -> whiteKing;
+                case QUEEN -> whiteQueen;
+                case BISHOP -> whiteBishop;
+                case KNIGHT -> whiteKnight;
+                case ROOK -> whiteRook;
+                case PAWN -> whitePawn;
             };
         } else {
             pieceToString = switch(type) {
-                case KING -> BLACK_KING;
-                case QUEEN -> BLACK_QUEEN;
-                case BISHOP -> BLACK_BISHOP;
-                case KNIGHT -> BLACK_KNIGHT;
-                case ROOK -> BLACK_ROOK;
-                case PAWN -> BLACK_PAWN;
+                case KING -> blackKing;
+                case QUEEN -> blackQueen;
+                case BISHOP -> blackBishop;
+                case KNIGHT -> blackKnight;
+                case ROOK -> blackRook;
+                case PAWN -> blackPawn;
             };
         }
         return pieceToString;
