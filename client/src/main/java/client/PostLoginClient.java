@@ -38,7 +38,6 @@ public class PostLoginClient implements Client {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout(params);
-                case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -54,7 +53,6 @@ public class PostLoginClient implements Client {
                 join <ID> [WHITE|BLACK]
                 observe <ID>
                 logout
-                quit
                 help
                 """;
     }
@@ -62,6 +60,11 @@ public class PostLoginClient implements Client {
     @Override
     public String welcome() {
         return "Welcome " + username + ".";
+    }
+
+    private String logout(String... params) throws ResponseException {
+        server.logout(new LogoutRequest(authToken));
+        return "quit";
     }
 
     private String create(String... params) throws ResponseException {
