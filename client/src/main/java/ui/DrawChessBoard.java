@@ -35,7 +35,7 @@ public class DrawChessBoard {
             for (int col = 1; col <= 8; ++col) {
                 boardBuilder.append(drawSquare(row, col));
             }
-            boardBuilder.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_WHITE).append(" ").append(intToChar(row));
+            boardBuilder.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_WHITE).append(" ").append(row);
             boardBuilder.append("\n");
         }
         boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   a   b  \u2009c  \u2009d   e  \u2009f   g  \u2009h");
@@ -44,8 +44,19 @@ public class DrawChessBoard {
     }
 
     public String drawBlackPerspective() {
+        StringBuilder boardBuilder = new StringBuilder();
+        boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   h   g  \u2009f  \u2009e   d  \u2009c   b  \u2009a\n");
+        for (int row = 1; row <= 8; ++row) {
+            boardBuilder.append(SET_TEXT_COLOR_WHITE).append(row).append(" ");
+            for (int col = 8; col >= 1; --col) {
+                boardBuilder.append(drawSquare(row, col));
+            }
+            boardBuilder.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_WHITE).append(" ").append(row);
+            boardBuilder.append("\n");
+        }
+        boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   h   g  \u2009f  \u2009e   d  \u2009c   b  \u2009a\n");
 
-        return "black perspective";//TODO
+        return boardBuilder.toString();
     }
 
     private String drawSquare(int row, int col) {
