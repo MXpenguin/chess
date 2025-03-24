@@ -4,6 +4,7 @@ import model.GameData;
 import resultsandrequests.*;
 import server.ResponseException;
 import server.ServerFacade;
+import ui.DrawChessBoard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +96,7 @@ public class PostLoginClient implements Client {
 
     private String join(String... params) throws ResponseException {
         if (params.length != 2) {
-            return "Please provide a game number and a team color.";
+            return "Please provide a game id number and a team color.";
         }
 
         int id;
@@ -115,7 +116,7 @@ public class PostLoginClient implements Client {
         }
 
         // join game
-        int gameId = gamesList.get(id).gameID();
+        int gameId = gamesList.get(id-1).gameID();
         JoinGameRequest request = new JoinGameRequest(color, gameId);
         request.setAuthToken(authToken);
         server.joinGame(request);
@@ -123,5 +124,27 @@ public class PostLoginClient implements Client {
         new Repl(new GamePlayClient()).run();//TODO
 
         return welcome();
+    }
+
+    private String observe(String... params) {
+        if (params.length != 1) {
+            return "Please provide a game id number.";
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(params[0]);
+        } catch(NumberFormatException e) {
+            return "Please provide a valid id.";
+        }
+
+        if (id < 1 || id > gamesList.size()) {
+            return "Please provide a valid id within the range of games.";
+        }
+
+        GameData game = gamesList.get(id-1);
+        DrawChessBoard boardDrawer = new DrawChessBoard(game);
+
+        return boardDrawer.drawWhitePerspective();
     }
 }
