@@ -131,6 +131,6 @@ public class ChessPiece {
                 case PAWN -> BLACK_PAWN;
             };
         }
-        return "\b" + pieceToString + "\b";
+        return pieceToString;
     }
 }
