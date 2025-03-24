@@ -1,10 +1,7 @@
 package client;
 
 import model.GameData;
-import resultsandrequests.CreateGameRequest;
-import resultsandrequests.CreateGameResult;
-import resultsandrequests.ListGamesRequest;
-import resultsandrequests.ListGamesResult;
+import resultsandrequests.*;
 import server.ResponseException;
 import server.ServerFacade;
 
@@ -94,5 +91,37 @@ public class PostLoginClient implements Client {
         }
 
         return stringGamesListBuilder.toString();
+    }
+
+    private String join(String... params) throws ResponseException {
+        if (params.length != 2) {
+            return "Please provide a game number and a team color.";
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(params[0]);
+        } catch(NumberFormatException e) {
+            return "Please provide a valid id.";
+        }
+
+        String color = params[1].toLowerCase();
+        if (!"white".equals(color) && !"black".equals(color)) {
+            return "Please provide a valid team color.";
+        }
+
+        if (id < 1 || id > gamesList.size()) {
+            return "Please provide a valid id within the range of games.";
+        }
+
+        // join game
+        int gameId = gamesList.get(id).gameID();
+        JoinGameRequest request = new JoinGameRequest(color, gameId);
+        request.setAuthToken(authToken);
+        server.joinGame(request);
+
+        new Repl(new GamePlayClient()).run();//TODO
+
+        return welcome();
     }
 }
