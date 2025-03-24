@@ -72,6 +72,6 @@ public class PreLoginClient implements Client {
         String username = result.getUsername();
         String authToken = result.getAuthToken();
         new Repl(new PostLoginClient(serverUrl, username, authToken)).run();
-        return "";
+        return welcome();
     }
 }
