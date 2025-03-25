@@ -9,8 +9,6 @@ import server.ServerFacade;
 
 import java.util.Arrays;
 
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-
 public class PreLoginClient implements Client {
 
     private final ServerFacade server;
@@ -50,7 +48,7 @@ public class PreLoginClient implements Client {
 
     @Override
     public String welcome() {
-        return "Welcome to chess.";
+        return "\nWelcome to chess.";
     }
 
     private String register(String... params) throws ResponseException {

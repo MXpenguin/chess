@@ -60,7 +60,7 @@ public class PostLoginClient implements Client {
 
     @Override
     public String welcome() {
-        return "Welcome " + username + ".";
+        return "\nWelcome " + username + ".";
     }
 
     private String logout(String... params) throws ResponseException {
@@ -121,9 +121,9 @@ public class PostLoginClient implements Client {
 
         GameData game = gamesList.get(id-1);
 
-//        System.out.println(game);                   //TODO
-//        System.out.println(game.game());
-//        System.out.println(game.game().getBoard());
+        JoinGameRequest request = new JoinGameRequest(color.toUpperCase(), game.gameID());
+        request.setAuthToken(authToken);
+        server.joinGame(request);
 
         DrawChessBoard drawChessBoard = new DrawChessBoard(
                 new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
