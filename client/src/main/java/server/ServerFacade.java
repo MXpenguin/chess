@@ -10,8 +10,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpResponse;
-import java.util.Map;
 
 public class ServerFacade {
     private final String serverUrl;
