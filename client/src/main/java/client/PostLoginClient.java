@@ -9,7 +9,6 @@ import ui.DrawChessBoard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;
