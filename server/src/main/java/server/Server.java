@@ -158,7 +158,6 @@ public class Server {
                     default -> res.status(500);
                 }
             }
-            System.out.println(new Gson().toJson(result));//TODO
             return new Gson().toJson(result);
         } catch(DataAccessException e) {
             res.status(500);

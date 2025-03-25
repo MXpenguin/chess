@@ -7,9 +7,9 @@ import dataaccess.SQLUserDAO;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import resultsandrequests.*;
-import server.ResponseException;
+import serverfacade.ResponseException;
 import server.Server;
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 
 
 public class ServerFacadeTests {

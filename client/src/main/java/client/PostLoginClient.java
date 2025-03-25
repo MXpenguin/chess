@@ -3,8 +3,8 @@ package client;
 import chess.ChessGame;
 import model.GameData;
 import resultsandrequests.*;
-import server.ResponseException;
-import server.ServerFacade;
+import serverfacade.ResponseException;
+import serverfacade.ServerFacade;
 import ui.DrawChessBoard;
 
 import java.util.ArrayList;

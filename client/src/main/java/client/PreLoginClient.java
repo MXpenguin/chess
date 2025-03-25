@@ -4,8 +4,8 @@ import resultsandrequests.LoginRequest;
 import resultsandrequests.LoginResult;
 import resultsandrequests.RegisterRequest;
 import resultsandrequests.RegisterResult;
-import server.ResponseException;
-import server.ServerFacade;
+import serverfacade.ResponseException;
+import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 
