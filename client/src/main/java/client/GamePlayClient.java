@@ -1,6 +1,9 @@
 package client;
 
-public class GamePlayClient implements Client {
+import serverfacade.ServerMessageObserver;
+import websocket.messages.ServerMessage;
+
+public class GamePlayClient implements Client, ServerMessageObserver {
     @Override
     public String eval(String input) {
         return "";
@@ -14,5 +17,10 @@ public class GamePlayClient implements Client {
     @Override
     public String welcome() {
         return "";
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+
     }
 }
