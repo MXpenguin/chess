@@ -80,7 +80,7 @@ public class WebsocketHandler {
         gameConnections.broadcast(gameID, username, msg);
 
         ServerMessage loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                new Gson().toJson(chessGame), null, null);
+                chessGame, null, null);
         gameConnections.send(gameID, username, loadGame);
     }
 

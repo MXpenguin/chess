@@ -1,11 +1,18 @@
 package client;
 
+import serverfacade.ServerMessageObserver;
+import serverfacade.WebsocketCommunicator;
+import ui.DrawChessBoard;
+import websocket.messages.ServerMessage;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
 public class Repl {
-    Client client;
+    private final Client client;
+
+    private DrawChessBoard drawChessBoard;
 
     public Repl(Client client) {
         this.client = client;
