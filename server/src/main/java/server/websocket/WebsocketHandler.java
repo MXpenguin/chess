@@ -55,7 +55,7 @@ public class WebsocketHandler {
             }
 
         } catch(Exception e) {
-
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class WebsocketHandler {
 
         ServerMessage loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
                 new Gson().toJson(chessGame), null, null);
-
+        gameConnections.send(gameID, username, loadGame);
     }
 
     private void makeMove() {
