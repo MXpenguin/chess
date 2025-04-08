@@ -4,11 +4,13 @@ import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.*;
 import resultsandrequests.*;
+import server.websocket.WebsocketHandler;
 import service.GameService;
 import service.UserService;
 import spark.*;
 
 import javax.xml.crypto.Data;
+import java.net.http.WebSocket;
 import java.util.Map;
 
 public class Server {
@@ -38,6 +40,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", WebsocketHandler.class);
         createRoutes();
 
         //This line initializes the server and can be removed once you have a functioning endpoint 

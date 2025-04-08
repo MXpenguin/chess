@@ -11,6 +11,10 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
 
+    String game;
+    String errorMessage;
+    String message;
+
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
@@ -21,8 +25,27 @@ public class ServerMessage {
         this.serverMessageType = type;
     }
 
+    public ServerMessage(ServerMessageType type, String game, String errorMessage, String message) {
+        this.serverMessageType = type;
+        this.game = game;
+        this.errorMessage = errorMessage;
+        this.message = message;
+    }
+
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public String getGame() {
+        return this.game;
+    }
+
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 
     @Override
@@ -34,11 +57,14 @@ public class ServerMessage {
             return false;
         }
         ServerMessage that = (ServerMessage) o;
-        return getServerMessageType() == that.getServerMessageType();
+        return getServerMessageType() == that.getServerMessageType() &&
+                Objects.equals(getGame(), that.getGame()) &&
+                Objects.equals(getErrorMessage(), that.getErrorMessage()) &&
+                Objects.equals(getMessage(), that.getMessage());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getServerMessageType());
+        return Objects.hash(getServerMessageType(), getGame(), getErrorMessage(), getMessage());
     }
 }

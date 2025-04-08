@@ -15,10 +15,37 @@ public class WebsocketHandler {
     public void onMessage(Session session, String msg) throws IOException {
         try {
             UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
-
+            
+            switch(command.getCommandType()) {
+                case CONNECT -> {
+                }
+                case MAKE_MOVE -> {
+                }
+                case LEAVE -> {
+                }
+                case RESIGN -> {
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + command.getCommandType());
+            }
 
         } catch(Exception e) {
 
         }
+    }
+
+    private void connect(String username) {
+
+    }
+
+    private void makeMove() {
+
+    }
+
+    private void leave() {
+
+    }
+
+    private void resign() {
+
     }
 }
