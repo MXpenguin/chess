@@ -27,6 +27,16 @@ public class DrawChessBoard {
         this.lightPieceColor = SET_TEXT_COLOR_WHITE;
     }
 
+    public DrawChessBoard(ChessGame game) {
+        this.game = game;
+        this.board = game.getBoard();
+
+        this.darkSquareColor = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
+        this.lightSquareColor = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
+        this.darkPieceColor = SET_TEXT_COLOR_BLACK;
+        this.lightPieceColor = SET_TEXT_COLOR_WHITE;
+    }
+
     public String drawWhitePerspective() {
         StringBuilder boardBuilder = new StringBuilder();
         boardBuilder.append(SET_TEXT_COLOR_WHITE).append("   a   b  \u2009c  \u2009d   e  \u2009f   g  \u2009h\n");

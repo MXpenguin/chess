@@ -124,17 +124,12 @@ public class PostLoginClient implements Client {
         request.setAuthToken(authToken);
         server.joinGame(request);
 
-        DrawChessBoard drawChessBoard = new DrawChessBoard(
-                new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
-                        game.gameName(), new ChessGame()));
-        if ("white".equals(color)) {
-            return drawChessBoard.drawWhitePerspective();
-        } else {
-            return drawChessBoard.drawBlackPerspective();
-        }
+        new Repl(new GamePlayClient(serverUrl, username, authToken, color)).run();
+
+        return welcome();
     }
 
-    private String observe(String... params) {
+    private String observe(String... params) throws ResponseException {
         if (params.length != 1) {
             return "Please provide a game id number.";
         }
@@ -150,11 +145,8 @@ public class PostLoginClient implements Client {
             return "Please provide a valid id within the range of games.";
         }
 
-        GameData game = gamesList.get(id-1);
-        DrawChessBoard boardDrawer = new DrawChessBoard(
-                new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
-                        game.gameName(), new ChessGame()));
+        new Repl(new GamePlayClient(serverUrl, username, authToken, "")).run();
 
-        return boardDrawer.drawWhitePerspective();
+        return welcome();
     }
 }
