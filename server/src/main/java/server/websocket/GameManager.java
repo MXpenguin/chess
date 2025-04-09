@@ -25,4 +25,8 @@ public class GameManager {
     public void send(Integer gameID, String clientName, ServerMessage message) throws IOException {
         games.get(gameID).send(clientName, message);
     }
+
+    public void remove(Integer gameID, String clientName) {
+        games.get(gameID).remove(clientName);
+    }
 }

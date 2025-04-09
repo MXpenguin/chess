@@ -47,11 +47,9 @@ public class WebsocketHandler {
 
             switch(command.getCommandType()) {
                 case CONNECT -> connect(gameID, username, session);
-                case MAKE_MOVE -> makeMove(gameID, username, move, session);
-                case LEAVE -> {
-                }
-                case RESIGN -> {
-                }
+                case MAKE_MOVE -> makeMove(gameID, username, move);
+                case LEAVE -> leave(gameID, username);
+                case RESIGN -> resign(gameID, username);
                 default -> throw new IllegalStateException("Unexpected value: " + command.getCommandType());
             }
 
@@ -82,7 +80,7 @@ public class WebsocketHandler {
         gameConnections.send(gameID, username, loadGame(chessGame));
     }
 
-    private void makeMove(Integer gameID, String username, ChessMove move, Session session) throws DataAccessException, IOException {
+    private void makeMove(Integer gameID, String username, ChessMove move) throws DataAccessException, IOException {
         ChessGame chessGame = null;
         for (GameData game : gameDAO.listGames()) {
             if (game.gameID() == gameID) {
@@ -94,6 +92,10 @@ public class WebsocketHandler {
         if (chessGame == null) {
             gameConnections.send(gameID, username, error("Error: there is no game"));
             return;
+        }
+
+        if (chessGame.isGameOver()) {
+            gameConnections.send(gameID, username, error("Error: game is over"));
         }
 
         if (!chessGame.moveIsCorrectColor(move)) {
@@ -135,12 +137,13 @@ public class WebsocketHandler {
         }
     }
 
-    private void leave() {
-
+    private void leave(Integer gameID, String username) throws IOException {
+        gameConnections.remove(gameID, username);
+        gameConnections.broadcast(gameID, "", notification(username + " left the game"));
     }
 
-    private void resign() {
-
+    private void resign(Integer gameID, String username) throws IOException {
+        gameConnections.broadcast(gameID, "", notification(username + " has resigned"));
     }
 
     private ServerMessage notification(String message) {

@@ -112,6 +112,20 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
+    public void updateChessGame(Integer gameID, ChessGame game) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "UPDATE gameTable SET chessGame=? WHERE gameID=?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, new Gson().toJson(game));
+                preparedStatement.setInt(2, gameID);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Failed to update chess game data after move: %s", e.getMessage()));
+        }
+    }
+
     private final String[] dropStatements = {
             """
             TRUNCATE TABLE gameTable
