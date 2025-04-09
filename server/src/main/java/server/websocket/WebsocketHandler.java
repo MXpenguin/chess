@@ -82,9 +82,15 @@ public class WebsocketHandler {
 
     private void makeMove(Integer gameID, String username, ChessMove move) throws DataAccessException, IOException {
         ChessGame chessGame = null;
+        ChessGame.TeamColor playerColor = null;
         for (GameData game : gameDAO.listGames()) {
             if (game.gameID() == gameID) {
                 chessGame = game.game();
+                if (username.equals(game.whiteUsername())) {
+                    playerColor = ChessGame.TeamColor.WHITE;
+                } else if (username.equals(game.blackUsername())) {
+                    playerColor = ChessGame.TeamColor.BLACK;
+                }
                 break;
             }
         }
@@ -96,6 +102,11 @@ public class WebsocketHandler {
 
         if (chessGame.isGameOver()) {
             gameConnections.send(gameID, username, error("Error: game is over"));
+            return;
+        }
+
+        if (playerColor != chessGame.getTeamTurn()) {
+            gameConnections.send(gameID, username, error("Error: not your turn"));
             return;
         }
 
@@ -146,7 +157,16 @@ public class WebsocketHandler {
         gameConnections.broadcast(gameID, "", notification(username + " left the game"));
     }
 
-    private void resign(Integer gameID, String username) throws IOException {
+    private void resign(Integer gameID, String username) throws IOException, DataAccessException {
+        ChessGame chessGame = null;
+        for (GameData game : gameDAO.listGames()) {
+            if (game.gameID() == gameID) {
+                chessGame = game.game();
+                chessGame.setGameOver();
+                gameDAO.updateChessGame(gameID, chessGame);
+                break;
+            }
+        }
         gameConnections.broadcast(gameID, "", notification(username + " has resigned"));
     }
 
