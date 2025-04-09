@@ -96,10 +96,12 @@ public class WebsocketHandler {
 
         if (chessGame.isGameOver()) {
             gameConnections.send(gameID, username, error("Error: game is over"));
+            return;
         }
 
         if (!chessGame.moveIsCorrectColor(move)) {
             gameConnections.send(gameID, username, error("Error: wrong color"));
+            return;
         }
 
         try {
@@ -107,6 +109,7 @@ public class WebsocketHandler {
             gameDAO.updateChessGame(gameID, chessGame);
         } catch (InvalidMoveException e) {
             gameConnections.send(gameID, username, error("Error: invalid move"));
+            return;
         }
 
         // LOAD_GAME

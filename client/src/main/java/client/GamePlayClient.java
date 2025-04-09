@@ -30,6 +30,7 @@ public class GamePlayClient implements Client, ServerMessageObserver {
         this.authToken = authToken;
         this.gameID = gameID;
         this.color = color;
+        drawChessBoard = new DrawChessBoard(new ChessGame());
 
         server = new WebsocketCommunicator(serverUrl, this);
 
@@ -54,7 +55,7 @@ public class GamePlayClient implements Client, ServerMessageObserver {
                     server.resign(authToken, gameID);
                 }
                 case "redraw" -> {
-
+                    draw();
                 }
                 case "possibilities" -> {
 
@@ -92,13 +93,7 @@ public class GamePlayClient implements Client, ServerMessageObserver {
             case LOAD_GAME -> {
                 ChessGame game = message.getGame();
                 drawChessBoard = new DrawChessBoard(game);
-                if ("black".equals(color)) {
-                    System.out.println();
-                    System.out.println(drawChessBoard.drawBlackPerspective());
-                } else {
-                    System.out.println();
-                    System.out.println(drawChessBoard.drawWhitePerspective());
-                }
+                draw();
             }
             case ERROR -> {
                 System.out.println(message.getErrorMessage());
@@ -107,6 +102,16 @@ public class GamePlayClient implements Client, ServerMessageObserver {
                 System.out.println(message.getMessage());
             }
             default -> throw new IllegalStateException("Unexpected value: " + message.getServerMessageType());
+        }
+    }
+
+    private void draw() {
+        if ("black".equals(color)) {
+            System.out.println();
+            System.out.println(drawChessBoard.drawBlackPerspective());
+        } else {
+            System.out.println();
+            System.out.println(drawChessBoard.drawWhitePerspective());
         }
     }
 
@@ -124,10 +129,14 @@ public class GamePlayClient implements Client, ServerMessageObserver {
             }
         }
 
-        ChessMove chessMove = new ChessMove(getChessPositionFromText(params[0]),
-                getChessPositionFromText(params[1]), promotion);
+        try {
+            ChessMove chessMove = new ChessMove(getChessPositionFromText(params[0]),
+                    getChessPositionFromText(params[1]), promotion);
 
-        server.move(authToken, gameID, chessMove);
+            server.move(authToken, gameID, chessMove);
+        } catch(NumberFormatException e) {
+            throw new ResponseException(500, "bad input");
+        }
 
         return "";
     }
@@ -140,7 +149,7 @@ public class GamePlayClient implements Client, ServerMessageObserver {
             throw new ResponseException(500, "Needs a column and row");
         }
 
-        int col = Integer.parseInt(text.substring(0,1));
+        int col = text.substring(0,1).toLowerCase().charAt(0) - 'a' + 1;
         int row = Integer.parseInt(text.substring(1,2));
 
         return new ChessPosition(row, col);
