@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
@@ -46,8 +47,7 @@ public class WebsocketHandler {
 
             switch(command.getCommandType()) {
                 case CONNECT -> connect(gameID, username, session);
-                case MAKE_MOVE -> {
-                }
+                case MAKE_MOVE -> makeMove(gameID, username, move, session);
                 case LEAVE -> {
                 }
                 case RESIGN -> {
@@ -65,6 +65,7 @@ public class WebsocketHandler {
 
         ChessGame chessGame = null;
         String typeOfPlayer = "an observer";
+
         for (GameData game : gameDAO.listGames()) {
             if (game.gameID() == gameID) {
                 if (username.equals(game.blackUsername())) {
@@ -76,17 +77,62 @@ public class WebsocketHandler {
                 break;
             }
         }
-        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                null, null, username + " has connected to the game as " + typeOfPlayer);
-        gameConnections.broadcast(gameID, username, msg);
 
-        ServerMessage loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                chessGame, null, null);
-        gameConnections.send(gameID, username, loadGame);
+        gameConnections.broadcast(gameID, username, notification(username + " has connected to the game as " + typeOfPlayer));
+        gameConnections.send(gameID, username, loadGame(chessGame));
     }
 
-    private void makeMove() {
+    private void makeMove(Integer gameID, String username, ChessMove move, Session session) throws DataAccessException, IOException {
+        ChessGame chessGame = null;
+        for (GameData game : gameDAO.listGames()) {
+            if (game.gameID() == gameID) {
+                chessGame = game.game();
+                break;
+            }
+        }
 
+        if (chessGame == null) {
+            gameConnections.send(gameID, username, error("Error: there is no game"));
+            return;
+        }
+
+        if (!chessGame.moveIsCorrectColor(move)) {
+            gameConnections.send(gameID, username, error("Error: invalid move"));
+        }
+
+        try {
+            chessGame.makeMove(move);
+        } catch (InvalidMoveException e) {
+            gameConnections.send(gameID, username, error("Error: invalid move"));
+        }
+
+        // LOAD_GAME
+        gameConnections.broadcast(gameID, "", loadGame(chessGame));
+
+        // NOTIFY MOVE
+        String moveText = move.toString();
+        gameConnections.broadcast(gameID, username, notification(username + " moved " + moveText));
+
+        //Check
+        if (chessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
+            gameConnections.broadcast(gameID, "", notification("black is in check"));
+        } else if (chessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
+            gameConnections.broadcast(gameID, "", notification("white is in check"));
+        }
+
+        //Checkmate
+        if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            gameConnections.broadcast(gameID, "", notification("black is in checkmate"));
+        } else if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            gameConnections.broadcast(gameID, "", notification("white is in checkmate"));
+        }
+
+        //Stalemate
+        if (chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK && chessGame.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            gameConnections.broadcast(gameID, "", notification("black is in stalemate"));
+        } else if (chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE && chessGame.isInStalemate(ChessGame.TeamColor.WHITE)) {
+            gameConnections.broadcast(gameID, "", notification("white is in stalemate"));
+        }
     }
 
     private void leave() {
@@ -95,5 +141,20 @@ public class WebsocketHandler {
 
     private void resign() {
 
+    }
+
+    private ServerMessage notification(String message) {
+        return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                null, null, message);
+    }
+
+    private ServerMessage loadGame(ChessGame game) {
+        return new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                game, null, null);
+    }
+
+    private ServerMessage error(String errorMessage) {
+        return new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                null, errorMessage, null);
     }
 }

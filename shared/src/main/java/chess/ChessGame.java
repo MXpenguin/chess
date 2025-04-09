@@ -119,6 +119,14 @@ public class ChessGame {
         }
     }
 
+    public boolean moveIsCorrectColor(ChessMove move) {
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        if (piece == null) {
+            return false;
+        }
+        return currentTeam.equals(piece.getTeamColor());
+    }
+
     private ChessPosition getKingPosition(TeamColor teamColor) {
         ChessPiece king = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         for (int i = 1; i <= 8; ++i) {

@@ -62,6 +62,7 @@ public class WebsocketCommunicator extends Endpoint {
         try {
             var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            this.session.close();
         } catch (IOException ex) {
             throw new ResponseException(500, "Failed to connect via /ws");
         }

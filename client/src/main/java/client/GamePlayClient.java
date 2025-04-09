@@ -1,6 +1,9 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
 import serverfacade.ResponseException;
 import serverfacade.ServerFacade;
@@ -41,13 +44,14 @@ public class GamePlayClient implements Client, ServerMessageObserver {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             switch (cmd) {
                 case "move" -> {
-                    move(params);
+                    return move(params);
                 }
                 case "leave" -> {
-
+                    server.leave(authToken, gameID);
+                    return "quit";
                 }
                 case "resign" -> {
-
+                    server.resign(authToken, gameID);
                 }
                 case "redraw" -> {
 
@@ -69,7 +73,7 @@ public class GamePlayClient implements Client, ServerMessageObserver {
     @Override
     public String help() {
         return """
-                move <col&row> <col&row>
+                move <col&row> <col&row> (promotion)
                 leave
                 resign
                 redraw
@@ -107,12 +111,38 @@ public class GamePlayClient implements Client, ServerMessageObserver {
     }
 
     private String move(String... params) throws ResponseException {
-        if (params.length != 2) {
+        if (params.length != 2 && params.length != 3) {
             return "Please provide a starting position and ending position";
         }
 
+        ChessPiece.PieceType promotion = null;
+        if (params.length == 3) {
+            try {
+                promotion = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return "Invalid promotion type";
+            }
+        }
 
+        ChessMove chessMove = new ChessMove(getChessPositionFromText(params[0]),
+                getChessPositionFromText(params[1]), promotion);
+
+        server.move(authToken, gameID, chessMove);
 
         return "";
+    }
+
+    private ChessPosition getChessPositionFromText(String text) throws ResponseException {
+        if (text == null) {
+            throw new ResponseException(500, "Really bad input");
+        }
+        if (text.length() < 2) {
+            throw new ResponseException(500, "Needs a column and row");
+        }
+
+        int col = Integer.parseInt(text.substring(0,1));
+        int row = Integer.parseInt(text.substring(1,2));
+
+        return new ChessPosition(row, col);
     }
 }
