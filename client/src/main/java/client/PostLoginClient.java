@@ -124,7 +124,7 @@ public class PostLoginClient implements Client {
         request.setAuthToken(authToken);
         server.joinGame(request);
 
-        new Repl(new GamePlayClient(serverUrl, username, authToken, color)).run();
+        new Repl(new GamePlayClient(serverUrl, username, authToken, game.gameID(), color)).run();
 
         return welcome();
     }
@@ -145,7 +145,9 @@ public class PostLoginClient implements Client {
             return "Please provide a valid id within the range of games.";
         }
 
-        new Repl(new GamePlayClient(serverUrl, username, authToken, "")).run();
+        GameData game = gamesList.get(id-1);
+
+        new Repl(new GamePlayClient(serverUrl, username, authToken, game.gameID(), "")).run();
 
         return welcome();
     }

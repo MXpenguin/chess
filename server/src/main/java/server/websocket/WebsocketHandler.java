@@ -3,10 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -21,14 +18,18 @@ import java.io.IOException;
 public class WebsocketHandler {
     private final GameManager gameConnections = new GameManager();
 
-    private GameDAO gameDAO;
-    private UserDAO userDAO;
-    private AuthDAO authDAO;
+    private GameDAO gameDAO = null;
+    private UserDAO userDAO = null;
+    private AuthDAO authDAO = null;
 
-    public WebsocketHandler(GameDAO gameDAO, UserDAO userDAO, AuthDAO authDAO) {
-        this.gameDAO = gameDAO;
-        this.userDAO = userDAO;
-        this.authDAO = authDAO;
+    public WebsocketHandler() {
+        try {
+            authDAO = new SQLAuthDAO();
+            userDAO = new SQLUserDAO();
+            gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @OnWebSocketMessage
