@@ -69,11 +69,11 @@ public class GamePlayClient implements Client, ServerMessageObserver {
     @Override
     public String help() {
         return """
-                move <col&row>
+                move <col&row> <col&row>
                 leave
                 resign
                 redraw
-                possibilities  - show legal moves
+                possibilities <col&row>  - show legal moves
                 """;
     }
 
@@ -106,7 +106,13 @@ public class GamePlayClient implements Client, ServerMessageObserver {
         }
     }
 
-    private void move(String... params) throws ResponseException {
+    private String move(String... params) throws ResponseException {
+        if (params.length != 2) {
+            return "Please provide a starting position and ending position";
+        }
 
+
+
+        return "";
     }
 }
