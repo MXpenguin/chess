@@ -24,7 +24,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.clientName.equals(excludeClientName)) {
-                    c.send(message.toString());//TODO
+                    c.send(message.toString());
                 }
             } else {
                 removeList.add(c);
@@ -42,7 +42,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (c.clientName.equals(clientName)) {
-                    c.send(message.toString());//TODO
+                    c.send(message.toString());
                 }
             } else {
                 removeList.add(c);

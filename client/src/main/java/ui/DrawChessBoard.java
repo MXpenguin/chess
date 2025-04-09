@@ -98,7 +98,7 @@ public class DrawChessBoard {
             boardBuilder.append(SET_TEXT_COLOR_WHITE).append(row).append(" ");
             for (int col = 8; col >= 1; --col) {
                 if (validMoves.contains(new ChessMove(position, new ChessPosition(row, col), null)) ||
-                        validMoves.contains(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.QUEEN))) {
+                        validMoves.contains(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.KNIGHT))) {
                     boardBuilder.append(drawSquare(row, col, true));
                 } else {
                     boardBuilder.append(drawSquare(row, col, false));
