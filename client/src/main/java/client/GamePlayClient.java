@@ -155,11 +155,9 @@ public class GamePlayClient implements Client, ServerMessageObserver {
 
         if ("black".equals(color)) {
             return drawChessBoard.drawBlackPerspective(position);
-        } else if ("white".equals(color)) {
+        } else {
             return drawChessBoard.drawWhitePerspective(position);
         }
-
-        return "";
     }
 
     private ChessPosition getChessPositionFromText(String text) throws ResponseException {
