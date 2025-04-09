@@ -41,6 +41,9 @@ public class WebsocketHandler {
             Integer gameID = command.getGameID();
 
             AuthData authData = authDAO.getAuth(command.getAuthToken());
+            if (authData == null) {
+                session.getRemote().sendString(error("Error: unauthorized").toString());
+            }
             String username = authData.username();
 
             ChessMove move = command.getMove();
@@ -74,6 +77,11 @@ public class WebsocketHandler {
                 chessGame = game.game();
                 break;
             }
+        }
+
+        if (chessGame == null) {
+            gameConnections.send(gameID, username, error("Error: no game"));
+            return;
         }
 
         gameConnections.broadcast(gameID, username, notification(username + " has connected to the game as " + typeOfPlayer));
@@ -130,18 +138,20 @@ public class WebsocketHandler {
         String moveText = move.toString();
         gameConnections.broadcast(gameID, username, notification(username + " moved " + moveText));
 
+        //Checkmate
+        if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            gameConnections.broadcast(gameID, "", notification("black is in checkmate"));
+            return;
+        } else if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            gameConnections.broadcast(gameID, "", notification("white is in checkmate"));
+            return;
+        }
+
         //Check
         if (chessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
             gameConnections.broadcast(gameID, "", notification("black is in check"));
         } else if (chessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
             gameConnections.broadcast(gameID, "", notification("white is in check"));
-        }
-
-        //Checkmate
-        if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-            gameConnections.broadcast(gameID, "", notification("black is in checkmate"));
-        } else if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            gameConnections.broadcast(gameID, "", notification("white is in checkmate"));
         }
 
         //Stalemate
@@ -152,7 +162,18 @@ public class WebsocketHandler {
         }
     }
 
-    private void leave(Integer gameID, String username) throws IOException {
+    private void leave(Integer gameID, String username) throws IOException, DataAccessException {
+        for (GameData game : gameDAO.listGames()) {
+            if (game.gameID() == gameID) {
+                if (username.equals(game.whiteUsername())) {
+                    gameDAO.updateGame(gameID, "WHITE", null);
+                } else if (username.equals(game.blackUsername())) {
+                    gameDAO.updateGame(gameID, "BLACK", null);
+                }
+                break;
+            }
+        }
+
         gameConnections.remove(gameID, username);
         gameConnections.broadcast(gameID, "", notification(username + " left the game"));
     }
@@ -162,6 +183,10 @@ public class WebsocketHandler {
         for (GameData game : gameDAO.listGames()) {
             if (game.gameID() == gameID) {
                 chessGame = game.game();
+                if (chessGame.isGameOver()) {
+                    gameConnections.send(gameID, username, error("Error: game is already over"));
+                    return;
+                }
                 if (!username.equals(game.whiteUsername()) && !username.equals(game.blackUsername())) {
                     gameConnections.send(gameID, username, error("Error: observers can't resign"));
                     return;

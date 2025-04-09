@@ -87,11 +87,19 @@ public class GameService {
 
         String playerColor = request.getPlayerColor();
 
+        String username = authDataAccess.getAuth(authToken).username();
+
         if ("WHITE".equals(playerColor)) {
+            if (username.equals(game.whiteUsername())) {
+                return new JoinGameResult();
+            }
             if (!"".equals(game.whiteUsername()) && game.whiteUsername() != null) {
                 return new JoinGameResult("Error: already taken");
             }
         } else if ("BLACK".equals(playerColor)) {
+            if (username.equals(game.blackUsername())) {
+                return new JoinGameResult();
+            }
             if (!"".equals(game.blackUsername()) && game.blackUsername() != null) {
                 return new JoinGameResult("Error: already taken");
             }
@@ -99,7 +107,6 @@ public class GameService {
             return new JoinGameResult("Error: bad request");
         }
 
-        String username = authDataAccess.getAuth(authToken).username();
         gameDataAccess.updateGame(gameID, playerColor, username);
 
         return new JoinGameResult();
