@@ -19,7 +19,7 @@ import java.io.IOException;
 public class WebsocketHandler {
     private final GameManager gameConnections = new GameManager();
 
-    private GameDAO gameDAO = null;
+    private SQLGameDAO gameDAO = null;
     private UserDAO userDAO = null;
     private AuthDAO authDAO = null;
 
@@ -99,11 +99,12 @@ public class WebsocketHandler {
         }
 
         if (!chessGame.moveIsCorrectColor(move)) {
-            gameConnections.send(gameID, username, error("Error: invalid move"));
+            gameConnections.send(gameID, username, error("Error: wrong color"));
         }
 
         try {
             chessGame.makeMove(move);
+            gameDAO.updateChessGame(gameID, chessGame);
         } catch (InvalidMoveException e) {
             gameConnections.send(gameID, username, error("Error: invalid move"));
         }
