@@ -162,6 +162,10 @@ public class WebsocketHandler {
         for (GameData game : gameDAO.listGames()) {
             if (game.gameID() == gameID) {
                 chessGame = game.game();
+                if (!username.equals(game.whiteUsername()) && !username.equals(game.blackUsername())) {
+                    gameConnections.send(gameID, username, error("Error: observers can't resign"));
+                    return;
+                }
                 chessGame.setGameOver();
                 gameDAO.updateChessGame(gameID, chessGame);
                 break;
