@@ -58,7 +58,7 @@ public class GamePlayClient implements Client, ServerMessageObserver {
                     draw();
                 }
                 case "possibilities" -> {
-
+                    return getLegalMoves(params);
                 }
                 default -> {
                     return help();
@@ -136,6 +136,27 @@ public class GamePlayClient implements Client, ServerMessageObserver {
             server.move(authToken, gameID, chessMove);
         } catch(NumberFormatException e) {
             throw new ResponseException(500, "bad input");
+        }
+
+        return "";
+    }
+
+    private String getLegalMoves(String... params) throws ResponseException {
+        if (params.length < 1) {
+            return "Please provide a column and row of a piece";
+        }
+
+        ChessPosition position;
+        try {
+            position = getChessPositionFromText(params[0]);
+        } catch(NumberFormatException e) {
+            throw new ResponseException(500, "bad input");
+        }
+
+        if ("black".equals(color)) {
+            return drawChessBoard.drawBlackPerspective(position);
+        } else if ("white".equals(color)) {
+            return drawChessBoard.drawWhitePerspective(position);
         }
 
         return "";

@@ -57,7 +57,7 @@ public class ChessGame {
     }
 
     /**
-     * Gets a valid moves for a piece at the given location
+     * Gets all valid moves for a piece at the given location
      *
      * @param startPosition the piece to get valid moves for
      * @return Set of valid moves for requested piece, or null if no piece at
@@ -92,8 +92,6 @@ public class ChessGame {
 
             board.addPiece(endPosition, endPiece);
             board.addPiece(startPosition, piece);
-
-            //board = tempBoard;
         }
 
         return validMoves;
